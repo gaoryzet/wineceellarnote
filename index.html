@@ -1410,72 +1410,73 @@ async function submitForm(){
   if(!currentUser){showToast('❌ 로그인이 필요합니다');return;}
 
   const f=formState;
-  let ok=true;
   const st=s=>String(s==null?'':s).trim();
 
-  // 유효성 검사 - 탭 0으로 이동 후 에러 표시
+  // 유효성 검사
   if(!st(f.name)){
     switchFormTab(0);
-    setTimeout(()=>{
-      const ne=document.getElementById('err-name');
-      if(ne)ne.style.display='block';
-    },50);
+    setTimeout(()=>{const ne=document.getElementById('err-name');if(ne)ne.style.display='block';},50);
     showToast('⚠️ 와인 이름을 입력해주세요');
     return;
   }
   if(f.vintage&&(+f.vintage<1900||+f.vintage>2030)){
     switchFormTab(0);
-    setTimeout(()=>{
-      const ve=document.getElementById('err-vintage');
-      if(ve)ve.style.display='block';
-    },50);
+    setTimeout(()=>{const ve=document.getElementById('err-vintage');if(ve)ve.style.display='block';},50);
     showToast('⚠️ 빈티지는 1900~2030 사이로 입력해주세요');
     return;
   }
-  const wine={
-    id:f.id||uid(),
-    name:st(f.name), producer:st(f.producer)||null,
-    country:f.country||null, region:st(f.region)||null,
-    grape:f.grape||null, wine_type:f.wine_type,
-    vintage:f.vintage?+f.vintage:null, alcohol:f.alcohol?+f.alcohol:null,
-    user_image_url:f.user_image_url||null, status:f.status,
-    purchase_price:parsePrice(f.purchase_price),
-    purchase_place:st(f.purchase_place)||null,
-    purchase_date:f.purchase_date||null,
-    quantity:+f.quantity||1,
-    rating:f.has_tasting&&f.rating>0?f.rating:null,
-    aroma:f.has_tasting&&f.aroma>0?f.aroma:null,
-    body:f.has_tasting&&f.body>0?f.body:null,
-    acidity:f.has_tasting&&f.acidity>0?f.acidity:null,
-    tannin:f.has_tasting&&f.tannin>0?f.tannin:null,
-    sweetness:f.has_tasting&&f.sweetness>0?f.sweetness:null,
-    finish:f.has_tasting&&f.finish>0?f.finish:null,
-    memo:f.has_tasting&&st(f.memo)?st(f.memo):null,
-    food_pairing:f.has_tasting&&st(f.food_pairing)?st(f.food_pairing):null,
-    tags:[...f.tags], repurchase:f.repurchase,
-    drank_at:f.has_tasting&&f.drank_at?f.drank_at:null,
-  };
-  // 이미지: base64면 Storage에 업로드 후 URL로 교체
+
+  // 버튼 로딩 상태
   const btn=document.getElementById('submit-btn');
   if(btn){btn.disabled=true;btn.textContent='저장 중...';}
+
   try{
+    // wine 객체 생성 (try 안으로 이동 — 에러 발생 시 catch로 처리)
+    const wine={
+      id:f.id||null,  // 신규: null → DB가 UUID 생성. 수정: f.id 사용
+      name:st(f.name), producer:st(f.producer)||null,
+      country:f.country||null, region:st(f.region)||null,
+      grape:f.grape||null, wine_type:f.wine_type||'red',
+      vintage:f.vintage?+f.vintage:null, alcohol:f.alcohol?+f.alcohol:null,
+      user_image_url:f.user_image_url||null, status:f.status||'stored',
+      purchase_price:parsePrice(f.purchase_price),
+      purchase_place:st(f.purchase_place)||null,
+      purchase_date:f.purchase_date||null,
+      quantity:+f.quantity||1,
+      rating:f.has_tasting&&f.rating>0?f.rating:null,
+      aroma:f.has_tasting&&f.aroma>0?f.aroma:null,
+      body:f.has_tasting&&f.body>0?f.body:null,
+      acidity:f.has_tasting&&f.acidity>0?f.acidity:null,
+      tannin:f.has_tasting&&f.tannin>0?f.tannin:null,
+      sweetness:f.has_tasting&&f.sweetness>0?f.sweetness:null,
+      finish:f.has_tasting&&f.finish>0?f.finish:null,
+      memo:f.has_tasting&&st(f.memo)?st(f.memo):null,
+      food_pairing:f.has_tasting&&st(f.food_pairing)?st(f.food_pairing):null,
+      tags:[...f.tags], repurchase:f.repurchase,
+      drank_at:f.has_tasting&&f.drank_at?f.drank_at:null,
+    };
+
+    // 이미지 base64 → Supabase Storage 업로드
     if(wine.user_image_url&&wine.user_image_url.startsWith('data:')){
       const url=await uploadImageToStorage(wine.user_image_url);
       wine.user_image_url=url;
     }
-    if(curScreen==='edit'){
+
+    if(curScreen==='edit'&&wine.id){
       await dbUpdateWine(wine.id,wine);
       wines=wines.map(w=>w.id===wine.id?{...wine}:w);
       selectedId=wine.id;curScreen='detail';
     } else {
       const saved=await dbInsertWine(wine);
-      wines=[saved,...wines];curScreen=curTab;
+      wines=[saved,...wines];
+      curScreen=curTab;
     }
+    showToast('✅ 저장됐습니다!');
     renderMainContent();
   }catch(err){
-    showToast('❌ 저장 실패: '+err.message);
-    const b2=document.getElementById('submit-btn');
-    if(b2){b2.disabled=false;b2.textContent='저장하기';}
+    console.error('submitForm error:', err);
+    showToast('❌ 저장 실패: '+(err?.message||'알 수 없는 오류'));
+    if(btn){btn.disabled=false;btn.textContent='저장';}
   }
 }
 
