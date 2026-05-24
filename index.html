@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExNSIgZmlsbD0iIzhCMDAwMCIvPjxwYXRoIGQ9Ik0xNjYgMTAwIFExNTQgMTkwIDE1OCAyMzIgUTE2NCAyOTIgMjU2IDMxNCBRMzQ4IDI5MiAzNTQgMjMyIFEzNTggMTkwIDM0NiAxMDAgWiIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii45MiIvPjxwYXRoIGQ9Ik0xNzIgMjQ4IFExNzggMjk0IDI1NiAzMTQgUTMzNCAyOTQgMzQwIDI0OCBaIiBmaWxsPSIjQzAzOTJCIiBvcGFjaXR5PSIuNDUiLz48ZWxsaXBzZSBjeD0iMjA4IiBjeT0iMTcyIiByeD0iMjYiIHJ5PSI1MCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii4yIi8+PHJlY3QgeD0iMjQyIiB5PSIzMTQiIHdpZHRoPSIyOCIgaGVpZ2h0PSI5NiIgcng9IjE0IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iLjc4Ii8+PHBhdGggZD0iTTE4NiA0MDggUTI1NiAzOTggMzI2IDQwOCIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBmaWxsPSJub25lIiBvcGFjaXR5PSIuNzgiLz48L3N2Zz4=">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiV2luZSBDZWxsYXIgTm90ZSIsInNob3J0X25hbWUiOiLsmYDsnbjssL3qs6AiLCJkZXNjcmlwdGlvbiI6IuuCtOqwgCDrp4jsi6Ag7JmA7J247J2EIOq4sOyWte2VmOqzoCDri6TsnYwg7ISg7YOd7J2EIOuNlCDsnpjtlZjshLjsmpQiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzhCMDAwMCIsInRoZW1lX2NvbG9yIjoiI0MwMzkyQiIsIm9yaWVudGF0aW9uIjoicG9ydHJhaXQiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCMmFXVjNRbTk0UFNJd0lEQWdOVEV5SURVeE1pSWdlRzFzYm5NOUltaDBkSEE2THk5M2QzY3Vkek11YjNKbkx6SXdNREF2YzNabklqNDhjbVZqZENCM2FXUjBhRDBpTlRFeUlpQm9aV2xuYUhROUlqVXhNaUlnY25nOUlqRXhOU0lnWm1sc2JEMGlJemhDTURBd01DSXZQanh3WVhSb0lHUTlJazB4TmpZZ01UQXdJRkV4TlRRZ01Ua3dJREUxT0NBeU16SWdVVEUyTkNBeU9USWdNalUySURNeE5DQlJNelE0SURJNU1pQXpOVFFnTWpNeUlGRXpOVGdnTVRrd0lETTBOaUF4TURBZ1dpSWdabWxzYkQwaWQyaHBkR1VpSUc5d1lXTnBkSGs5SWk0NU1pSXZQanh3WVhSb0lHUTlJazB4TnpJZ01qUTRJRkV4TnpnZ01qazBJREkxTmlBek1UUWdVVE16TkNBeU9UUWdNelF3SURJME9DQmFJaUJtYVd4c1BTSWpRekF6T1RKQ0lpQnZjR0ZqYVhSNVBTSXVORFVpTHo0OFpXeHNhWEJ6WlNCamVEMGlNakE0SWlCamVUMGlNVGN5SWlCeWVEMGlNallpSUhKNVBTSTFNQ0lnWm1sc2JEMGlkMmhwZEdVaUlHOXdZV05wZEhrOUlpNHlJaTgrUEhKbFkzUWdlRDBpTWpReUlpQjVQU0l6TVRRaUlIZHBaSFJvUFNJeU9DSWdhR1ZwWjJoMFBTSTVOaUlnY25nOUlqRTBJaUJtYVd4c1BTSjNhR2wwWlNJZ2IzQmhZMmwwZVQwaUxqYzRJaTgrUEhCaGRHZ2daRDBpVFRFNE5pQTBNRGdnVVRJMU5pQXpPVGdnTXpJMklEUXdPQ0lnYzNSeWIydGxQU0ozYUdsMFpTSWdjM1J5YjJ0bExYZHBaSFJvUFNJeU9DSWdjM1J5YjJ0bExXeHBibVZqWVhBOUluSnZkVzVrSWlCbWFXeHNQU0p1YjI1bElpQnZjR0ZqYVhSNVBTSXVOemdpTHo0OEwzTjJaejQ9Iiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwiLCJwdXJwb3NlIjoiYW55IG1hc2thYmxlIn1dfQ==">
+<meta name="theme-color" content="#C0392B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="와인창고">
 <title>Wine Cellar Note 🍷</title>
 <style>
 :root{
@@ -982,6 +989,19 @@ document.getElementById('btn-login').addEventListener('click',()=>{
   document.getElementById('scr-main').classList.remove('hidden');
   curScreen='home';renderMainContent();
 });
+
+// iOS 홈화면 아이콘 생성
+(function(){try{
+  const svg=`<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><rect width="512" height="512" rx="115" fill="#8B0000"/><path d="M166 100 Q154 190 158 232 Q164 292 256 314 Q348 292 354 232 Q358 190 346 100 Z" fill="white" opacity=".92"/><path d="M172 248 Q178 294 256 314 Q334 294 340 248 Z" fill="#C0392B" opacity=".45"/><ellipse cx="208" cy="172" rx="26" ry="50" fill="white" opacity=".2"/><rect x="242" y="314" width="28" height="96" rx="14" fill="white" opacity=".78"/><path d="M186 408 Q256 398 326 408" stroke="white" stroke-width="28" stroke-linecap="round" fill="none" opacity=".78"/></svg>`;
+  const img=new Image();
+  img.onload=function(){
+    const cv=document.createElement('canvas');cv.width=180;cv.height=180;
+    cv.getContext('2d').drawImage(img,0,0,180,180);
+    const lk=document.createElement('link');lk.rel='apple-touch-icon';
+    lk.href=cv.toDataURL('image/png');document.head.appendChild(lk);
+  };
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}catch(e){}})();
 </script>
 </body>
 </html>
