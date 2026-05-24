@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="와인창고">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <title>Wine Cellar Note 🍷</title>
 <style>
 :root{
@@ -111,9 +112,21 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
 .api-key-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:99px;font-weight:500}
 .api-key-status.set{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7}
 .api-key-status.unset{background:#FFF3E0;color:#E65100;border:1px solid #FFCC80}
+
+/* ── Supabase Loading ── */
+#init-loading{position:fixed;inset:0;background:linear-gradient(160deg,#fff 0%,#FDF0EE 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:99999}
+.spinner{width:36px;height:36px;border:3px solid rgba(192,57,43,.2);border-top-color:#C0392B;border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#hdr-avatar{width:26px;height:26px;border-radius:13px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 </style>
 </head>
 <body>
+<!-- 초기 로딩 -->
+<div id="init-loading">
+  <div style="font-size:48px">🍷</div>
+  <div class="spinner"></div>
+  <p style="font-size:13px;color:var(--mut)">연결 중...</p>
+</div>
 <div id="app"><div id="shell">
 
 <!-- ── LOGIN ── -->
@@ -147,6 +160,7 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
       <span class="bold" style="font-size:16px;color:var(--dark);letter-spacing:-.2px">Wine Cellar Note</span>
     </div>
     <div class="row gap8">
+      <div id="hdr-avatar" style="display:none"></div>
       <span id="hdr-count" class="xxs" style="color:var(--light);background:var(--surf);padding:3px 9px;border-radius:99px;font-weight:500"></span>
       <button onclick="openSettings()" id="hdr-settings-btn" style="width:32px;height:32px;border-radius:8px;background:var(--surf);display:flex;align-items:center;justify-content:center;color:var(--mut)" title="설정">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -262,6 +276,18 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
         <p class="xs" style="color:#9B2335;line-height:1.6">라벨 인식 1회 ≈ 약 3원 (GPT-4o mini 기준)<br>월 100회 사용 시 약 300원 수준</p>
       </div>
     </div>
+    <!-- 계정 섹션 -->
+    <div style="margin-top:8px">
+      <p class="xs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">계정</p>
+      <div id="settings-user-info" class="card-flat" style="margin-bottom:10px;display:flex;align-items:center;gap:12px">
+        <div id="settings-avatar" style="width:40px;height:40px;border-radius:20px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0"></div>
+        <div style="flex:1;min-width:0">
+          <p id="settings-user-name" class="sm dark bold" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></p>
+          <p id="settings-user-email" class="xs mut" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></p>
+        </div>
+      </div>
+      <button onclick="signOut()" style="width:100%;padding:12px;border:1.5px solid var(--danger);border-radius:var(--rs);color:var(--danger);font-size:13px;font-weight:600;background:none;transition:all .15s" onmouseenter="this.style.background='var(--red-lt)'" onmouseleave="this.style.background='none'">로그아웃</button>
+    </div>
   </div>
 </div>
 </div></div>
@@ -293,18 +319,102 @@ const TAGS=['가볍다','묵직하다','달다','드라이하다','부드럽다'
 const TK=['aroma','body','acidity','tannin','sweetness','finish'];
 const TL=['향','바디','산미','탄닌','당도','여운'];
 
-let wines=[
-  {id:'s1',name:'샤또 마르고 2018',producer:'Château Margaux',country:'프랑스',region:'보르도',grape:'까베르네 소비뇽',wine_type:'red',vintage:2018,alcohol:13.5,status:'stored',purchase_price:350000,purchase_place:'갤러리아',quantity:2,rating:4.5,aroma:5,body:5,acidity:3,tannin:4,sweetness:2,finish:5,memo:'깊고 복합적인 탄닌. 블랙베리와 삼나무 향. 특별한 날을 위해 보관 중.',tags:['묵직하다','향이 좋다'],repurchase:true,drank_at:'2024-03-10'},
-  {id:'s2',name:'피노 그리지오 2022',producer:'Santa Margherita',country:'이탈리아',region:'베네토',grape:'피노 그리지오',wine_type:'white',vintage:2022,alcohol:12.5,status:'consumed',purchase_price:45000,purchase_place:'이마트',quantity:0,rating:3.5,aroma:3,body:2,acidity:4,tannin:1,sweetness:3,finish:3,memo:'가볍고 상큼. 해산물 파스타와 완벽한 페어링.',tags:['가볍다','드라이하다','음식과 잘 맞았다'],repurchase:true,drank_at:'2024-04-15'},
-  {id:'s3',name:'말벡 리제르바 2020',producer:'Zuccardi',country:'아르헨티나',region:'멘도사',grape:'말벡',wine_type:'red',vintage:2020,alcohol:14,status:'reorder',purchase_price:55000,purchase_place:'보틀벙커',quantity:0,rating:4,aroma:4,body:4,acidity:3,tannin:3,sweetness:2,finish:4,memo:'풍부한 보라빛 과일향. 부드러운 탄닌. 가성비 최고.',tags:['묵직하다','부드럽다','다시 사고 싶다'],repurchase:true,drank_at:'2024-05-01'},
-  {id:'s4',name:'모스카토 다스티 2023',producer:'Michele Chiarlo',country:'이탈리아',region:'피에몬테',grape:'모스카토',wine_type:'sparkling',vintage:2023,alcohol:5.5,status:'wishlist',purchase_price:35000,purchase_place:'코스트코',quantity:1,rating:null,aroma:null,body:null,acidity:null,tannin:null,sweetness:null,finish:null,memo:null,tags:[],repurchase:null,drank_at:null},
-  {id:'s5',name:'리오하 리제르바 2017',producer:'Marqués de Riscal',country:'스페인',region:'리오하',grape:'템프라니요',wine_type:'red',vintage:2017,alcohol:13.5,status:'consumed',purchase_price:62000,purchase_place:'현대백화점',quantity:0,rating:4,aroma:4,body:3,acidity:3,tannin:4,sweetness:2,finish:4,memo:'오크향이 인상적. 붉은 과실의 복합미.',tags:['드라이하다','향이 좋다'],repurchase:true,drank_at:'2024-06-20'},
-];
+// ══════════════════════════════
+// SUPABASE CONFIG
+// ══════════════════════════════
+const SUPABASE_URL='https://jfymocxoljqgfgsastvn.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmeW1vY3hvbGpxZ2Znc2FzdHZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMDQyNzEsImV4cCI6MjA5MjY4MDI3MX0.CeuLzOJZIORMS8dhTitvUr_2MajwD13xvQp7oTZeWmE';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
+let wines=[];
+let currentUser=null;
 let curTab='home',curScreen='home',selectedId=null;
 let filterStatus='all',filterSort='created',searchQ='';
-let _id=200;
-const uid=()=>'w'+(++_id);
+
+// ── DB 매핑 ──────────────────────────
+function rowToWine(r){
+  return {
+    id:r.id, name:r.name, producer:r.producer, country:r.country,
+    region:r.region, grape:r.grape, wine_type:r.wine_type,
+    vintage:r.vintage, alcohol:r.alcohol, status:r.status||'stored',
+    purchase_price:r.purchase_price, purchase_place:r.purchase_place,
+    purchase_date:r.purchase_date, quantity:r.quantity??1,
+    user_image_url:r.user_image_url,
+    rating:r.rating, aroma:r.aroma_score, body:r.body_score,
+    acidity:r.acidity_score, tannin:r.tannin_score,
+    sweetness:r.sweetness_score, finish:r.finish_score,
+    memo:r.memo, food_pairing:r.food_pairing,
+    tags:r.tags||[], repurchase:r.repurchase, drank_at:r.drank_at,
+  };
+}
+
+function wineToRow(w){
+  return {
+    name:w.name, producer:w.producer||null, country:w.country||null,
+    region:w.region||null, grape:w.grape||null, wine_type:w.wine_type||'red',
+    vintage:w.vintage||null, alcohol:w.alcohol||null, status:w.status||'stored',
+    purchase_price:w.purchase_price||null, purchase_place:w.purchase_place||null,
+    purchase_date:w.purchase_date||null, quantity:w.quantity??1,
+    user_image_url:w.user_image_url||null,
+    rating:w.rating||null, aroma_score:w.aroma||null, body_score:w.body||null,
+    acidity_score:w.acidity||null, tannin_score:w.tannin||null,
+    sweetness_score:w.sweetness||null, finish_score:w.finish||null,
+    memo:w.memo||null, food_pairing:w.food_pairing||null,
+    tags:w.tags||[], repurchase:w.repurchase??null, drank_at:w.drank_at||null,
+  };
+}
+
+// ── DB 함수 ──────────────────────────
+async function loadWines(){
+  if(!currentUser)return;
+  const{data,error}=await sb.from('wines').select('*')
+    .eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  if(!error)wines=(data||[]).map(rowToWine);
+}
+
+async function dbInsertWine(wine){
+  const row={...wineToRow(wine),user_id:currentUser.id};
+  const{data,error}=await sb.from('wines').insert(row).select().single();
+  if(error)throw error;
+  return rowToWine(data);
+}
+
+async function dbUpdateWine(id,wine){
+  const{error}=await sb.from('wines').update(wineToRow(wine))
+    .eq('id',id).eq('user_id',currentUser.id);
+  if(error)throw error;
+}
+
+async function dbDeleteWine(id){
+  const{error}=await sb.from('wines').delete()
+    .eq('id',id).eq('user_id',currentUser.id);
+  if(error)throw error;
+}
+
+async function uploadImageToStorage(dataUrl){
+  if(!dataUrl||!dataUrl.startsWith('data:'))return dataUrl;
+  try{
+    const res=await fetch(dataUrl);
+    const blob=await res.blob();
+    const ext=(blob.type.split('/')[1])||'jpg';
+    const path=currentUser.id+'/'+Date.now()+'.'+ext;
+    const{error}=await sb.storage.from('wine-images')
+      .upload(path,blob,{contentType:blob.type,upsert:false});
+    if(error)return null;
+    const{data:{publicUrl}}=sb.storage.from('wine-images').getPublicUrl(path);
+    return publicUrl;
+  }catch(e){return null;}
+}
+
+// ── 헤더 사용자 표시 ──────────────────
+function updateHeaderUser(){
+  const el=document.getElementById('hdr-avatar');
+  if(!el||!currentUser)return;
+  const name=currentUser.user_metadata?.full_name||currentUser.email||'?';
+  const initial=name[0].toUpperCase();
+  el.textContent=initial;
+  el.style.display='flex';
+}
 
 // ══════════════════════════════
 // UTILS
@@ -747,6 +857,7 @@ function openSettings(){
   const input=document.getElementById('api-key-input');
   if(input)input.value=saved?'sk-...저장됨':'';
   updateApiKeyStatus();
+  updateSettingsUser();
 }
 
 function closeSettings(){
@@ -1174,7 +1285,14 @@ function closeDetail(){curScreen=curTab;renderMainContent();}
 function openNew(){initForm(null);curScreen='new';renderMainContent();}
 function openEdit(id){const w=wines.find(x=>x.id===id);initForm(w);curScreen='edit';renderMainContent();}
 function closeForm(){curScreen=selectedId&&curScreen==='edit'?'detail':curTab;renderMainContent();}
-function deleteWine(id){if(!confirm('이 와인을 삭제할까요?'))return;wines=wines.filter(w=>w.id!==id);selectedId=null;curScreen=curTab;renderMainContent();}
+async function deleteWine(id){
+  if(!confirm('이 와인을 삭제할까요?'))return;
+  try{
+    await dbDeleteWine(id);
+    wines=wines.filter(w=>w.id!==id);
+    selectedId=null;curScreen=curTab;renderMainContent();
+  }catch(err){showToast('❌ 삭제 실패: '+err.message);}
+}
 function setFilter(v){filterStatus=v;renderMainContent();}
 function setSort(v){filterSort=v;renderMainContent();}
 function doSearch(v){searchQ=v;renderMainContent();}
@@ -1216,7 +1334,7 @@ function formSetRepurchase(v){
   });
 }
 
-function submitForm(){
+async function submitForm(){
   const f=formState;
   let ok=true;
   // BUG1: null-safe trim - null 필드에 .trim() 호출 방지
@@ -1251,19 +1369,117 @@ function submitForm(){
     tags:[...f.tags], repurchase:f.repurchase,
     drank_at:f.has_tasting&&f.drank_at?f.drank_at:null,
   };
-  if(curScreen==='edit'){wines=wines.map(w=>w.id===wine.id?wine:w);selectedId=wine.id;curScreen='detail';}
-  else{wines=[wine,...wines];curScreen=curTab;}
-  renderMainContent();
+  // 이미지: base64면 Storage에 업로드 후 URL로 교체
+  const btn=document.querySelector('#form-screen .btn-red');
+  if(btn){btn.disabled=true;btn.textContent='저장 중...';}
+  try{
+    if(wine.user_image_url&&wine.user_image_url.startsWith('data:')){
+      const url=await uploadImageToStorage(wine.user_image_url);
+      wine.user_image_url=url;
+    }
+    if(curScreen==='edit'){
+      await dbUpdateWine(wine.id,wine);
+      wines=wines.map(w=>w.id===wine.id?{...wine}:w);
+      selectedId=wine.id;curScreen='detail';
+    } else {
+      const saved=await dbInsertWine(wine);
+      wines=[saved,...wines];curScreen=curTab;
+    }
+    renderMainContent();
+  }catch(err){
+    showToast('❌ 저장 실패: '+err.message);
+    if(btn){btn.disabled=false;btn.textContent='저장';}
+  }
 }
 
 // ══════════════════════════════
-// BOOT
+// BOOT — Supabase Auth
 // ══════════════════════════════
-document.getElementById('btn-login').addEventListener('click',()=>{
+function showLogin(){
+  document.getElementById('scr-login').classList.remove('hidden');
+  document.getElementById('scr-main').classList.add('hidden');
+}
+function showMain(){
   document.getElementById('scr-login').classList.add('hidden');
   document.getElementById('scr-main').classList.remove('hidden');
-  curScreen='home';renderMainContent();
+  updateHeaderUser();
+  curScreen='home';
+  renderMainContent();
+}
+function hideInitLoading(){
+  const el=document.getElementById('init-loading');
+  if(el)el.style.display='none';
+}
+
+async function signOut(){
+  if(!confirm('로그아웃 할까요?'))return;
+  closeSettings();
+  await sb.auth.signOut();
+}
+
+function updateSettingsUser(){
+  if(!currentUser)return;
+  const name=currentUser.user_metadata?.full_name||'';
+  const email=currentUser.email||'';
+  const initial=(name||email)[0]?.toUpperCase()||'?';
+  const n=document.getElementById('settings-user-name');
+  const e=document.getElementById('settings-user-email');
+  const a=document.getElementById('settings-avatar');
+  if(n)n.textContent=name||email;
+  if(e)e.textContent=email;
+  if(a)a.textContent=initial;
+}
+
+// Google 로그인 버튼
+document.getElementById('btn-login').addEventListener('click',async()=>{
+  const btn=document.getElementById('btn-login');
+  btn.disabled=true;
+  btn.innerHTML='<div class="spinner" style="width:20px;height:20px;border-width:2px"></div> 연결 중...';
+  try{
+    await sb.auth.signInWithOAuth({
+      provider:'google',
+      options:{redirectTo:window.location.origin}
+    });
+  }catch(err){
+    btn.disabled=false;
+    btn.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Google로 계속하기';
+    showToast('❌ 로그인 오류: '+err.message);
+  }
 });
+
+// 앱 초기화
+(async function initApp(){
+  try{
+    // 기존 세션 확인 (OAuth redirect 후 복원)
+    const{data:{session}}=await sb.auth.getSession();
+    if(session?.user){
+      currentUser=session.user;
+      await loadWines();
+      hideInitLoading();
+      showMain();
+    } else {
+      hideInitLoading();
+      showLogin();
+    }
+  }catch(e){
+    hideInitLoading();
+    showLogin();
+  }
+
+  // 인증 상태 변화 감지
+  sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='SIGNED_IN'&&session?.user){
+      currentUser=session.user;
+      await loadWines();
+      hideInitLoading();
+      showMain();
+    } else if(event==='SIGNED_OUT'){
+      currentUser=null;
+      wines=[];
+      showLogin();
+    }
+  });
+})();
 
 // iOS 홈화면 아이콘 생성
 (function(){try{
