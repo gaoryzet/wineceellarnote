@@ -101,6 +101,16 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
 .img-placeholder{width:100%;height:160px;border:2px dashed var(--bdr);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;background:var(--surf);transition:border-color .15s}
 .img-placeholder:hover{border-color:var(--red)}
 .barcode-result{background:var(--red-lt);border:1px solid #F0B8B2;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+
+/* ── Settings & AI ── */
+#settings-overlay{position:fixed;inset:0;background:var(--bg);z-index:9998;display:flex;flex-direction:column}
+.ai-btn{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#C0392B,#E74C3C);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(192,57,43,.35);transition:opacity .15s;border:none;cursor:pointer}
+.ai-btn:hover{opacity:.9}
+.ai-btn:disabled{opacity:.5;cursor:not-allowed}
+.ai-result-field{background:var(--red-lt);border:1px solid #F0B8B2;border-radius:8px;padding:8px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.api-key-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:99px;font-weight:500}
+.api-key-status.set{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7}
+.api-key-status.unset{background:#FFF3E0;color:#E65100;border:1px solid #FFCC80}
 </style>
 </head>
 <body>
@@ -136,7 +146,12 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
       </div>
       <span class="bold" style="font-size:16px;color:var(--dark);letter-spacing:-.2px">Wine Cellar Note</span>
     </div>
-    <span id="hdr-count" class="xxs" style="color:var(--light);background:var(--surf);padding:3px 9px;border-radius:99px;font-weight:500"></span>
+    <div class="row gap8">
+      <span id="hdr-count" class="xxs" style="color:var(--light);background:var(--surf);padding:3px 9px;border-radius:99px;font-weight:500"></span>
+      <button onclick="openSettings()" id="hdr-settings-btn" style="width:32px;height:32px;border-radius:8px;background:var(--surf);display:flex;align-items:center;justify-content:center;color:var(--mut)" title="설정">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+    </div>
   </header>
   <div id="main-content" style="flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative;background:var(--bg)"></div>
   <nav>
@@ -205,6 +220,48 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
     </div>
     <p id="scan-hint" style="color:#888;font-size:12px;text-align:center;margin-bottom:12px">EAN-13 · EAN-8 · UPC · Code128 · QR 지원</p>
     <button id="scan-confirm-btn" onclick="confirmBarcode()" style="display:none;width:100%;padding:14px;background:#C0392B;color:#fff;border-radius:12px;font-size:15px;font-weight:600">이 바코드로 계속하기</button>
+  </div>
+</div>
+
+<!-- settings overlay -->
+<div id="settings-overlay" style="display:none">
+  <div class="topbar">
+    <button onclick="closeSettings()" style="font-size:20px;color:var(--red);padding:0 4px;line-height:1">←</button>
+    <span class="dark bold" style="flex:1;font-size:16px">설정</span>
+  </div>
+  <div class="scroll" style="padding:20px 16px">
+    <!-- API 키 섹션 -->
+    <div style="margin-bottom:24px">
+      <div class="row gap8" style="margin-bottom:6px;justify-content:space-between">
+        <p class="dark bold" style="font-size:15px">OpenAI API 키</p>
+        <span id="api-key-status" class="api-key-status unset">미설정</span>
+      </div>
+      <p class="xs mut" style="margin-bottom:14px;line-height:1.7">와인 라벨 AI 자동인식에 사용됩니다.<br>키는 이 기기에만 저장되며 외부로 전송되지 않습니다.</p>
+      <div style="position:relative;margin-bottom:10px">
+        <input id="api-key-input" type="password" placeholder="sk-..." style="padding-right:44px;font-family:monospace;font-size:13px" oninput="onApiKeyInput()">
+        <button onclick="toggleApiKeyVisible()" id="api-key-eye" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--mut)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <div class="row gap8">
+        <button onclick="saveApiKey()" class="btn-red" style="flex:1;padding:10px">저장</button>
+        <button onclick="clearApiKey()" style="flex:1;padding:10px;border:1.5px solid var(--bdr);border-radius:var(--rs);color:var(--mut);font-size:13px;font-weight:500">삭제</button>
+      </div>
+    </div>
+    <!-- 안내 -->
+    <div class="card-flat" style="background:var(--surf)">
+      <p class="xs bold dark" style="margin-bottom:8px">🔑 API 키 발급 방법</p>
+      <ol style="padding-left:18px;line-height:2;color:var(--mut);font-size:13px">
+        <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" style="color:var(--red);font-weight:600;text-decoration:underline">platform.openai.com 접속 →</a></li>
+        <li>로그인 → API Keys 메뉴</li>
+        <li>Create new secret key 클릭</li>
+        <li>생성된 키 복사 후 위에 붙여넣기</li>
+      </ol>
+      <div style="margin-top:12px;padding:10px;background:var(--red-lt);border-radius:8px;border:1px solid #F0B8B2">
+        <p class="xs" style="color:var(--red);font-weight:600;margin-bottom:3px">💰 비용 안내</p>
+        <p class="xs" style="color:#9B2335;line-height:1.6">라벨 인식 1회 ≈ 약 3원 (GPT-4o mini 기준)<br>월 100회 사용 시 약 300원 수준</p>
+      </div>
+    </div>
   </div>
 </div>
 </div></div>
@@ -640,36 +697,197 @@ function refreshImagePreview(){
   const container=document.getElementById('img-preview-container');
   if(!container)return;
   if(formState.user_image_url){
-    container.innerHTML=`
-      <div style="position:relative">
-        <img src="${formState.user_image_url}" class="img-thumb" alt="와인 사진">
-        <button onclick="removeImage()" style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:14px;background:rgba(0,0,0,.55);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;line-height:1">×</button>
-      </div>`;
+    const hasKey=!!localStorage.getItem('openai_api_key');
+    const aiBlock=hasKey
+      ?'<button id="ai-recognize-btn" onclick="recognizeWineLabel()" class="ai-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 1010 10"/><path d="M12 6v6l4 2"/><path d="M20 2v4h-4"/></svg> ✨ AI로 와인 라벨 인식</button>'
+      :'<div style="padding:10px;background:var(--surf);border-radius:8px;border:1px solid var(--bdr);display:flex;align-items:center;gap:8px"><span style="font-size:18px">🔑</span><div><p class="xs dark semi">AI 라벨 인식을 사용하려면</p><button onclick="openSettings()" style="font-size:12px;color:var(--red);font-weight:600;text-decoration:underline">OpenAI API 키 설정하기 →</button></div></div>';
+    container.innerHTML=
+      '<div style="position:relative;margin-bottom:10px">'
+      +'<img src="'+formState.user_image_url+'" class="img-thumb" alt="와인 사진">'
+      +'<button onclick="removeImage()" style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:14px;background:rgba(0,0,0,.55);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;line-height:1">×</button>'
+      +'</div>'
+      +aiBlock;
   } else {
     container.innerHTML=imagePlaceholderHTML();
   }
 }
 
 function imagePlaceholderHTML(){
-  return `<div style="display:flex;gap:8px">
-    <button type="button" onclick="pickImage('camera')" style="flex:1;height:100px;border:2px dashed var(--bdr);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--surf);cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--bdr)'">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+  return `<div style="display:flex;gap:8px;margin-bottom:8px">
+    <button type="button" onclick="pickImage('camera')" style="flex:1;height:90px;border:2px dashed var(--bdr);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--surf);cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--bdr)'">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
       <span style="font-size:11px;color:var(--mut);font-weight:500">카메라</span>
     </button>
-    <button type="button" onclick="pickImage('gallery')" style="flex:1;height:100px;border:2px dashed var(--bdr);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--surf);cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--bdr)'">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    <button type="button" onclick="pickImage('gallery')" style="flex:1;height:90px;border:2px dashed var(--bdr);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--surf);cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--bdr)'">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       <span style="font-size:11px;color:var(--mut);font-weight:500">갤러리</span>
     </button>
-    <button type="button" onclick="openScanner()" style="flex:1;height:100px;border:2px dashed var(--bdr);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--surf);cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--bdr)'">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><path d="M21 16h-3v3M21 21h-3M18 16v5M13 3v2M13 7v2M11 3h2M13 11h2M11 11h2M11 8v3M13 13v2M11 16h2M13 16v2M11 18h5M16 18v3M21 13h-5v3"/></svg>
-      <span style="font-size:11px;color:var(--mut);font-weight:500">바코드</span>
-    </button>
-  </div>`;
+  </div>
+  <button type="button" onclick="openScanner()" style="width:100%;padding:8px;border:1px solid var(--bdr);border-radius:8px;display:flex;align-items:center;justify-content:center;gap:6px;background:transparent;color:var(--mut);font-size:12px;font-weight:500;transition:all .15s" onmouseenter="this.style.borderColor='var(--mut)'" onmouseleave="this.style.borderColor='var(--bdr)'">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><path d="M21 16h-3v3M21 21h-3M18 16v5M13 3v2M13 7v2M11 3h2M13 11h2M11 11h2M11 8v3"/></svg>
+    바코드로 검색하기
+  </button>`;
 }
 
 function removeImage(){
   formState.user_image_url=null;
   refreshImagePreview();
+}
+
+
+// ══════════════════════════════
+// SETTINGS (OpenAI API Key)
+// ══════════════════════════════
+function openSettings(){
+  const overlay=document.getElementById('settings-overlay');
+  overlay.style.display='flex';
+  overlay.style.flexDirection='column';
+  // 저장된 키 표시
+  const saved=localStorage.getItem('openai_api_key')||'';
+  const input=document.getElementById('api-key-input');
+  if(input)input.value=saved?'sk-...저장됨':'';
+  updateApiKeyStatus();
+}
+
+function closeSettings(){
+  document.getElementById('settings-overlay').style.display='none';
+}
+
+function updateApiKeyStatus(){
+  const key=localStorage.getItem('openai_api_key');
+  const el=document.getElementById('api-key-status');
+  if(!el)return;
+  if(key){el.textContent='✓ 설정됨';el.className='api-key-status set';}
+  else{el.textContent='미설정';el.className='api-key-status unset';}
+}
+
+function onApiKeyInput(){
+  // 입력 중에는 실제 값으로 처리
+  const el=document.getElementById('api-key-input');
+  if(el&&el.value==='sk-...저장됨')el.value='';
+}
+
+function saveApiKey(){
+  const el=document.getElementById('api-key-input');
+  const val=(el?.value||'').trim();
+  if(!val||val==='sk-...저장됨'){showToast('API 키를 입력해주세요');return;}
+  if(!val.startsWith('sk-')){showToast('⚠️ 올바른 API 키 형식이 아닙니다\n(sk-로 시작해야 합니다)');return;}
+  localStorage.setItem('openai_api_key',val);
+  updateApiKeyStatus();
+  showToast('✅ API 키가 저장됐습니다');
+  closeSettings();
+}
+
+function clearApiKey(){
+  if(!confirm('저장된 API 키를 삭제할까요?'))return;
+  localStorage.removeItem('openai_api_key');
+  const el=document.getElementById('api-key-input');
+  if(el)el.value='';
+  updateApiKeyStatus();
+  showToast('API 키가 삭제됐습니다');
+}
+
+function toggleApiKeyVisible(){
+  const el=document.getElementById('api-key-input');
+  if(!el)return;
+  el.type=el.type==='password'?'text':'password';
+}
+
+// ══════════════════════════════
+// AI WINE LABEL RECOGNITION
+// ══════════════════════════════
+async function recognizeWineLabel(){
+  const apiKey=localStorage.getItem('openai_api_key');
+  if(!apiKey){openSettings();return;}
+  if(!formState.user_image_url){showToast('먼저 사진을 첨부해주세요');return;}
+
+  // UI: 로딩 상태
+  const btn=document.getElementById('ai-recognize-btn');
+  if(btn){
+    btn.disabled=true;
+    btn.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> 라벨 분석 중...`;
+  }
+
+  // spin 애니메이션 추가
+  if(!document.getElementById('spin-style')){
+    const s=document.createElement('style');
+    s.id='spin-style';
+    s.textContent='@keyframes spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(s);
+  }
+
+  try{
+    const res=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({
+        model:'gpt-4o-mini',
+        max_tokens:400,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image_url',image_url:{url:formState.user_image_url,detail:'low'}},
+            {type:'text',text:'이 와인 라벨을 분석해서 아래 JSON 형식으로만 응답하세요. 마크다운이나 추가 설명 없이 순수 JSON만.\n{\n  \"name\": \"와인 전체 이름 (빈티지 포함 가능)\",\n  \"producer\": \"생산자 또는 와이너리명\",\n  \"vintage\": 연도숫자또는null,\n  \"country\": \"생산국 (한국어)\",\n  \"region\": \"세부 지역\",\n  \"grape\": \"주요 포도 품종\",\n  \"alcohol\": 도수숫자또는null,\n  \"wine_type\": \"red 또는 white 또는 sparkling 또는 rose 또는 dessert 또는 fortified\"\n}\n정보가 라벨에 없으면 null로. wine_type은 반드시 저 6가지 중 하나로.'}
+          ]
+        }]
+      })
+    });
+
+    if(res.status===401){
+      showToast('❌ API 키가 올바르지 않습니다\n설정에서 키를 다시 확인해주세요');
+      openSettings();
+      return;
+    }
+    if(res.status===429){showToast('⚠️ API 요청 한도 초과\n잠시 후 다시 시도해주세요');return;}
+    if(!res.ok){showToast('❌ API 오류 ('+res.status+')\n다시 시도해주세요');return;}
+
+    const data=await res.json();
+    const raw=data.choices?.[0]?.message?.content||'';
+
+    // JSON 파싱 (```json ... ``` 감싼 경우도 처리)
+    let wine={};
+    try{
+      const clean=raw.replace(/```json|```/g,'').trim();
+      wine=JSON.parse(clean);
+    }catch(e){
+      showToast('⚠️ 라벨을 읽지 못했습니다\n선명한 사진으로 다시 시도해주세요');
+      return;
+    }
+
+    // 폼 필드 자동 채우기
+    const filled=[];
+    if(wine.name){formState.name=wine.name;filled.push('이름');}
+    if(wine.producer){formState.producer=wine.producer;filled.push('생산자');}
+    if(wine.vintage){formState.vintage=String(wine.vintage);filled.push('빈티지');}
+    if(wine.country){formState.country=wine.country;filled.push('국가');}
+    if(wine.region){formState.region=wine.region;filled.push('지역');}
+    if(wine.grape){formState.grape=wine.grape;filled.push('품종');}
+    if(wine.alcohol){formState.alcohol=String(wine.alcohol);filled.push('도수');}
+    if(wine.wine_type){formState.wine_type=wine.wine_type;filled.push('타입');}
+
+    if(filled.length===0){
+      showToast('⚠️ 정보를 찾지 못했습니다\n직접 입력해주세요');
+      return;
+    }
+
+    // 폼 전체 재렌더 (현재 탭 유지)
+    const mc=document.getElementById('main-content');
+    if(mc)mc.innerHTML=renderForm(curScreen==='edit');
+    // 탭 0으로 이동 (와인 정보 탭)
+    switchFormTab(0);
+
+    showToast('✅ AI 인식 완료!\n'+filled.join(' · ')+'\n나머지는 직접 수정해주세요');
+
+  }catch(err){
+    if(err.name==='TypeError'&&err.message.includes('fetch')){
+      showToast('📡 네트워크 오류\n인터넷 연결을 확인해주세요');
+    } else {
+      showToast('❌ 오류가 발생했습니다\n다시 시도해주세요');
+    }
+  } finally {
+    const b=document.getElementById('ai-recognize-btn');
+    if(b){b.disabled=false;b.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 1010 10"/><path d="M12 6v6l4 2"/><path d="M20 2v4h-4"/></svg> ✨ AI로 와인 라벨 인식';}
+  }
 }
 
 // ══════════════════════════════
