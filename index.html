@@ -416,6 +416,19 @@ function updateHeaderUser(){
   el.style.display='flex';
 }
 
+
+// ══════════════════════════════
+// SCORE DESCRIPTIONS
+// ══════════════════════════════
+const SCORE_DESCS={
+  aroma:    '향 (Aroma)|와인의 향기 강도와 복잡성. 꽃향·과일향·오크향·흙향 등',
+  body:     '바디 (Body)|입 안에서 느끼는 무게감과 풍부함. 가벼움 ↔ 묵직함',
+  acidity:  '산미 (Acidity)|입 안의 신선하고 산뜻한 느낌. 레몬·식초처럼 톡 쏘는 정도',
+  tannin:   '탄닌 (Tannin)|떫고 드라이한 느낌. 포도 씨·껍질·오크통에서 유래 (레드 와인)',
+  sweetness:'당도 (Sweetness)|입 안에서 느끼는 단맛의 정도. 드라이 ↔ 스위트',
+  finish:   '여운 (Finish)|삼킨 후 향과 맛이 지속되는 시간. 짧음 ↔ 길고 복잡함',
+};
+
 // ══════════════════════════════
 // UTILS
 // ══════════════════════════════
@@ -709,19 +722,25 @@ function renderForm(isEdit){
   const IS='background:#fff;border:1px solid var(--bdr);border-radius:10px;color:var(--dark);padding:10px 13px;font-size:14px;width:100%;font-family:inherit;-webkit-appearance:none;appearance:none;outline:none;transition:border-color .15s';
   const LS='display:block;font-size:11px;color:var(--mut);margin-bottom:7px;font-weight:600;text-transform:uppercase;letter-spacing:.05em';
   const regionOpts=(REGIONS[f.country]||[]).map(r=>`<option value="${esc(r)}" ${f.region===r?'selected':''}>${esc(r)}</option>`).join('');
-  const typeBtns=WINE_TYPES.map(t=>`<button type="button" onclick="formSet('wine_type','${t.v}')" style="padding:7px 13px;border-radius:99px;font-size:12px;font-weight:500;border:1.5px solid ${f.wine_type===t.v?t.c:'var(--bdr)'};background:${f.wine_type===t.v?t.c+'14':'transparent'};color:${f.wine_type===t.v?t.c:'var(--mut)'};transition:all .15s">${t.e} ${t.l}</button>`).join('');
-  const stBtns=STATUSES.map(s=>`<button type="button" onclick="formSet('status','${s.v}')" style="padding:7px 13px;border-radius:99px;font-size:12px;font-weight:500;border:1.5px solid ${f.status===s.v?s.c:'var(--bdr)'};background:${f.status===s.v?s.c+'14':'transparent'};color:${f.status===s.v?s.c:'var(--mut)'};transition:all .15s">${s.l}</button>`).join('');
+  const typeBtns=WINE_TYPES.map(t=>`<button type="button" data-type-val="${t.v}" onclick="formSetWineType('${t.v}','${t.c}')" style="padding:7px 13px;border-radius:99px;font-size:12px;font-weight:500;border:1.5px solid ${f.wine_type===t.v?t.c:'var(--bdr)'};background:${f.wine_type===t.v?t.c+'14':'transparent'};color:${f.wine_type===t.v?t.c:'var(--mut)'};transition:all .15s">${t.e} ${t.l}</button>`).join('');
+  const stBtns=STATUSES.map(s=>`<button type="button" data-status-val="${s.v}" onclick="formSetStatus('${s.v}','${s.c}')" style="padding:7px 13px;border-radius:99px;font-size:12px;font-weight:500;border:1.5px solid ${f.status===s.v?s.c:'var(--bdr)'};background:${f.status===s.v?s.c+'14':'transparent'};color:${f.status===s.v?s.c:'var(--mut)'};transition:all .15s">${s.l}</button>`).join('');
   const tagBtns=TAGS.map(t=>`<button type="button" onclick="formToggleTag('${esc(t)}')" class="tag-btn${f.tags.includes(t)?' on':''}">${h(t)}</button>`).join('');
-  const SCORE_DESCS={aroma:'와인의 향기 강도와 복잡성\n(꽃향, 과일향, 오크향, 흙향 등)',body:'입 안에서 느껴지는 무게감과 풍부함\n(가벼움 ↔ 묵직함)',acidity:'입 안의 신선하고 산뜻한 느낌\n(레몬·식초처럼 톡 쏘는 느낌)',tannin:'레드 와인의 떫고 드라이한 느낌\n(포도 씨·껍질·오크통에서 유래)',sweetness:'입 안에서 느끼는 단맛의 정도\n(드라이 ↔ 스위트)',finish:'삼킨 후 향과 맛이 지속되는 시간\n(짧음 ↔ 길고 복잡함)'};
-  const sliders=TK.map((k,i)=>`<div style="margin-bottom:14px">
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-      <span class="xs mut" style="width:32px">${TL[i]}</span>
-      <button type="button" onclick="toggleScoreInfo('${k}')" style="width:18px;height:18px;border-radius:9px;background:var(--surf);border:1px solid var(--bdr);color:var(--mut);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer">?</button>
-      <input type="range" min="0" max="5" step="1" value="${f[k]||0}" oninput="formSet('${k}',+this.value);document.getElementById('sv-${k}').textContent=this.value||'·'" style="flex:1">
-      <span id="sv-${k}" class="xs red bold" style="width:14px;text-align:right">${f[k]||'·'}</span>
-    </div>
-    <div id="info-${k}" style="display:none;background:var(--surf);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--mut);line-height:1.6;margin-left:38px;white-space:pre-line">${SCORE_DESCS['${k}']}</div>
-  </div>`).join('');
+  // SCORE_DESCS는 상수이므로 renderForm 밖에서 관리 (아래 전역 참조)
+  const sliders=TK.map((k,i)=>{
+    const desc=SCORE_DESCS[k]||'';
+    return `<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+        <span class="xs mut" style="width:32px">${TL[i]}</span>
+        <button type="button" onclick="toggleScoreInfo('${k}')" style="width:18px;height:18px;border-radius:9px;background:var(--surf);border:1px solid var(--bdr);color:var(--mut);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer" title="설명 보기">?</button>
+        <input type="range" min="0" max="5" step="1" value="${f[k]||0}" oninput="formSet('${k}',+this.value);document.getElementById('sv-${k}').textContent=this.value||'·'" style="flex:1">
+        <span id="sv-${k}" class="xs red bold" style="width:14px;text-align:right">${f[k]||'·'}</span>
+      </div>
+      <div id="info-${k}" style="display:none;background:#FFF8F0;border:1px solid #F0D8C0;border-radius:8px;padding:8px 10px;margin-left:38px">
+        <p style="font-size:12px;color:var(--dark);font-weight:500;margin-bottom:2px">${desc.split('|')[0]}</p>
+        <p style="font-size:11px;color:var(--mut)">${desc.split('|')[1]||''}</p>
+      </div>
+    </div>`;
+  }).join('');
   const repBtns=[{v:'true',l:'또 살게요 👍'},{v:'false',l:'아니요 👎'},{v:'null',l:'글쎄요 🤔'}].map(r=>{
     const on=(f.repurchase===true&&r.v==='true')||(f.repurchase===false&&r.v==='false')||(f.repurchase===null&&r.v==='null');
     return `<button type="button" data-rep="${r.v}" onclick="formSetRepurchase(${r.v})" class="pill-btn rep-btn${on?' on':''}">${r.l}</button>`;
@@ -730,6 +749,7 @@ function renderForm(isEdit){
     <div class="topbar">
       <button style="font-size:20px;color:var(--red);padding:0 4px;line-height:1" onclick="closeForm()">←</button>
       <span class="dark bold" style="flex:1;font-size:16px;letter-spacing:-.2px">${isEdit?'와인 수정':'새 와인 추가'}</span>
+      <button id="submit-btn" class="btn-red" onclick="submitForm()">저장</button>
     </div>
     <div class="tabs" id="form-tabs">
       <button class="tab-btn active" onclick="switchFormTab(0)">와인 정보</button>
@@ -1348,6 +1368,29 @@ function hoverStar(e,s){const rect=e.target.getBoundingClientRect();const half=(
 function resetStarHover(){const d=document.getElementById('star-display');if(d)d.innerHTML=renderStarInput(formState.rating||0);}
 
 
+
+function formSetWineType(v,color){
+  formState.wine_type=v;
+  document.querySelectorAll('[data-type-val]').forEach(btn=>{
+    const tv=btn.dataset.typeVal;
+    const t=WINE_TYPES.find(x=>x.v===tv);if(!t)return;
+    const on=tv===v;
+    btn.style.border='1.5px solid '+(on?t.c:'var(--bdr)');
+    btn.style.background=on?t.c+'14':'transparent';
+    btn.style.color=on?t.c:'var(--mut)';
+  });
+}
+function formSetStatus(v,color){
+  formState.status=v;
+  document.querySelectorAll('[data-status-val]').forEach(btn=>{
+    const sv=btn.dataset.statusVal;
+    const s=STATUSES.find(x=>x.v===sv);if(!s)return;
+    const on=sv===v;
+    btn.style.border='1.5px solid '+(on?s.c:'var(--bdr)');
+    btn.style.background=on?s.c+'14':'transparent';
+    btn.style.color=on?s.c:'var(--mut)';
+  });
+}
 function toggleScoreInfo(k){
   const el=document.getElementById('info-'+k);
   if(!el)return;
