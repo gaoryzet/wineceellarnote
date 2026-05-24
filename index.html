@@ -684,7 +684,23 @@ function renderDetail(w){
 // ══════════════════════════════
 let formState={};
 function initForm(w){
-  formState=w?{...w,user_image_url:w.user_image_url||null,vintage:w.vintage?String(w.vintage):'',alcohol:w.alcohol?String(w.alcohol):'',purchase_price:w.purchase_price!=null?w.purchase_price.toLocaleString('ko-KR'):'',quantity:String(w.quantity||1),has_tasting:w.rating!=null,rating:w.rating||0,aroma:w.aroma||0,body:w.body||0,acidity:w.acidity||0,tannin:w.tannin||0,sweetness:w.sweetness||0,finish:w.finish||0,memo:w.memo||'',food_pairing:w.food_pairing||'',tags:w.tags||[],repurchase:w.repurchase??null,drank_at:w.drank_at||today()}
+  const nn=v=>v==null?'':v;  // null → 빈 문자열 변환
+  formState=w?{...w,
+    user_image_url:w.user_image_url||null,
+    name:nn(w.name), producer:nn(w.producer), country:nn(w.country),
+    region:nn(w.region), grape:nn(w.grape),
+    wine_type:w.wine_type||'red',
+    vintage:w.vintage?String(w.vintage):'',
+    alcohol:w.alcohol?String(w.alcohol):'',
+    purchase_price:w.purchase_price!=null?w.purchase_price.toLocaleString('ko-KR'):'',
+    purchase_place:nn(w.purchase_place), purchase_date:nn(w.purchase_date),
+    quantity:String(w.quantity||1),
+    has_tasting:w.rating!=null,
+    rating:w.rating||0,aroma:w.aroma||0,body:w.body||0,acidity:w.acidity||0,
+    tannin:w.tannin||0,sweetness:w.sweetness||0,finish:w.finish||0,
+    memo:nn(w.memo), food_pairing:nn(w.food_pairing),
+    tags:w.tags||[], repurchase:w.repurchase??null, drank_at:w.drank_at||today()
+  }
   :{id:null,name:'',producer:'',country:'',region:'',grape:'',wine_type:'red',vintage:'',alcohol:'',status:'stored',purchase_price:'',purchase_place:'',purchase_date:'',quantity:'1',user_image_url:null,has_tasting:false,rating:0,aroma:0,body:0,acidity:0,tannin:0,sweetness:0,finish:0,memo:'',food_pairing:'',tags:[],repurchase:null,drank_at:today()};
 }
 
@@ -696,10 +712,15 @@ function renderForm(isEdit){
   const typeBtns=WINE_TYPES.map(t=>`<button type="button" onclick="formSet('wine_type','${t.v}')" style="padding:7px 13px;border-radius:99px;font-size:12px;font-weight:500;border:1.5px solid ${f.wine_type===t.v?t.c:'var(--bdr)'};background:${f.wine_type===t.v?t.c+'14':'transparent'};color:${f.wine_type===t.v?t.c:'var(--mut)'};transition:all .15s">${t.e} ${t.l}</button>`).join('');
   const stBtns=STATUSES.map(s=>`<button type="button" onclick="formSet('status','${s.v}')" style="padding:7px 13px;border-radius:99px;font-size:12px;font-weight:500;border:1.5px solid ${f.status===s.v?s.c:'var(--bdr)'};background:${f.status===s.v?s.c+'14':'transparent'};color:${f.status===s.v?s.c:'var(--mut)'};transition:all .15s">${s.l}</button>`).join('');
   const tagBtns=TAGS.map(t=>`<button type="button" onclick="formToggleTag('${esc(t)}')" class="tag-btn${f.tags.includes(t)?' on':''}">${h(t)}</button>`).join('');
-  const sliders=TK.map((k,i)=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:11px">
-    <span class="xs mut" style="width:32px">${TL[i]}</span>
-    <input type="range" min="0" max="5" step="1" value="${f[k]||0}" oninput="formSet('${k}',+this.value);document.getElementById('sv-${k}').textContent=this.value||'·'" style="flex:1">
-    <span id="sv-${k}" class="xs red bold" style="width:14px;text-align:right">${f[k]||'·'}</span>
+  const SCORE_DESCS={aroma:'와인의 향기 강도와 복잡성\n(꽃향, 과일향, 오크향, 흙향 등)',body:'입 안에서 느껴지는 무게감과 풍부함\n(가벼움 ↔ 묵직함)',acidity:'입 안의 신선하고 산뜻한 느낌\n(레몬·식초처럼 톡 쏘는 느낌)',tannin:'레드 와인의 떫고 드라이한 느낌\n(포도 씨·껍질·오크통에서 유래)',sweetness:'입 안에서 느끼는 단맛의 정도\n(드라이 ↔ 스위트)',finish:'삼킨 후 향과 맛이 지속되는 시간\n(짧음 ↔ 길고 복잡함)'};
+  const sliders=TK.map((k,i)=>`<div style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+      <span class="xs mut" style="width:32px">${TL[i]}</span>
+      <button type="button" onclick="toggleScoreInfo('${k}')" style="width:18px;height:18px;border-radius:9px;background:var(--surf);border:1px solid var(--bdr);color:var(--mut);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer">?</button>
+      <input type="range" min="0" max="5" step="1" value="${f[k]||0}" oninput="formSet('${k}',+this.value);document.getElementById('sv-${k}').textContent=this.value||'·'" style="flex:1">
+      <span id="sv-${k}" class="xs red bold" style="width:14px;text-align:right">${f[k]||'·'}</span>
+    </div>
+    <div id="info-${k}" style="display:none;background:var(--surf);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--mut);line-height:1.6;margin-left:38px;white-space:pre-line">${SCORE_DESCS['${k}']}</div>
   </div>`).join('');
   const repBtns=[{v:'true',l:'또 살게요 👍'},{v:'false',l:'아니요 👎'},{v:'null',l:'글쎄요 🤔'}].map(r=>{
     const on=(f.repurchase===true&&r.v==='true')||(f.repurchase===false&&r.v==='false')||(f.repurchase===null&&r.v==='null');
@@ -709,7 +730,6 @@ function renderForm(isEdit){
     <div class="topbar">
       <button style="font-size:20px;color:var(--red);padding:0 4px;line-height:1" onclick="closeForm()">←</button>
       <span class="dark bold" style="flex:1;font-size:16px;letter-spacing:-.2px">${isEdit?'와인 수정':'새 와인 추가'}</span>
-      <button class="btn-red" onclick="submitForm()">저장</button>
     </div>
     <div class="tabs" id="form-tabs">
       <button class="tab-btn active" onclick="switchFormTab(0)">와인 정보</button>
@@ -741,7 +761,7 @@ function renderForm(isEdit){
       </div>
       <div id="ftab1" class="hidden">
         <div style="margin-bottom:18px"><label style="${LS}">상태</label><div style="display:flex;gap:7px;flex-wrap:wrap">${stBtns}</div></div>
-        <div style="margin-bottom:16px"><label style="${LS}">구매가 (원)</label><input id="f-price" type="text" inputmode="numeric" placeholder="45,000" value="${esc(f.purchase_price)}" oninput="onPriceInput(this)" style="${IS}"></div>
+        <div style="margin-bottom:16px"><label style="${LS}">구매가 (원)</label><input id="f-price" type="text" inputmode="numeric" value="${esc(f.purchase_price)}" oninput="onPriceInput(this)" style="${IS}"></div>
         <div style="margin-bottom:16px"><label style="${LS}">구매처</label><select onchange="formSet('purchase_place',this.value)" style="${IS}"><option value="">선택</option>${PLACES.map(p=>`<option value="${esc(p)}"${f.purchase_place===p?' selected':''}>${esc(p)}</option>`).join('')}</select></div>
         <div style="margin-bottom:16px"><label style="${LS}">구매일</label><input type="date" value="${esc(f.purchase_date)}" onchange="formSet('purchase_date',this.value)" style="${IS}"></div>
         <div style="margin-bottom:16px"><label style="${LS}">수량</label>
@@ -967,14 +987,16 @@ async function recognizeWineLabel(){
 
     // 폼 필드 자동 채우기
     const filled=[];
-    if(wine.name){formState.name=wine.name;filled.push('이름');}
-    if(wine.producer){formState.producer=wine.producer;filled.push('생산자');}
-    if(wine.vintage){formState.vintage=String(wine.vintage);filled.push('빈티지');}
-    if(wine.country){formState.country=wine.country;filled.push('국가');}
-    if(wine.region){formState.region=wine.region;filled.push('지역');}
-    if(wine.grape){formState.grape=wine.grape;filled.push('품종');}
-    if(wine.alcohol){formState.alcohol=String(wine.alcohol);filled.push('도수');}
-    if(wine.wine_type){formState.wine_type=wine.wine_type;filled.push('타입');}
+    const validStr=v=>v&&v!=='null'&&v!=='undefined'&&String(v).trim()!=='';
+    if(validStr(wine.name)){formState.name=wine.name;filled.push('이름');}
+    if(validStr(wine.producer)){formState.producer=wine.producer;filled.push('생산자');}
+    if(wine.vintage&&wine.vintage!=='null'){formState.vintage=String(wine.vintage);filled.push('빈티지');}
+    if(validStr(wine.country)){formState.country=wine.country;filled.push('국가');}
+    if(validStr(wine.region)){formState.region=wine.region;filled.push('지역');}
+    if(validStr(wine.grape)){formState.grape=wine.grape;filled.push('품종');}
+    if(wine.alcohol&&wine.alcohol!=='null'){formState.alcohol=String(wine.alcohol);filled.push('도수');}
+    const validTypes=['red','white','sparkling','rose','dessert','fortified'];
+    if(wine.wine_type&&validTypes.includes(wine.wine_type)){formState.wine_type=wine.wine_type;filled.push('타입');}
 
     if(filled.length===0){
       showToast('⚠️ 정보를 찾지 못했습니다\n직접 입력해주세요');
@@ -1325,6 +1347,12 @@ function formSetStar(s){formState.rating=s;const d=document.getElementById('star
 function hoverStar(e,s){const rect=e.target.getBoundingClientRect();const half=(e.clientX-rect.left)<rect.width/2;const v=half?s-0.5:s;const d=document.getElementById('star-display');if(d)d.innerHTML=renderStarInput(v);}
 function resetStarHover(){const d=document.getElementById('star-display');if(d)d.innerHTML=renderStarInput(formState.rating||0);}
 
+
+function toggleScoreInfo(k){
+  const el=document.getElementById('info-'+k);
+  if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
+}
 // BUG2: repurchase 버튼 - state + DOM 동시 업데이트
 function formSetRepurchase(v){
   formState.repurchase=v;
@@ -1335,17 +1363,32 @@ function formSetRepurchase(v){
 }
 
 async function submitForm(){
+  // 로그인 체크
+  if(!currentUser){showToast('❌ 로그인이 필요합니다');return;}
+
   const f=formState;
   let ok=true;
-  // BUG1: null-safe trim - null 필드에 .trim() 호출 방지
   const st=s=>String(s==null?'':s).trim();
-  const ne=document.getElementById('err-name');
-  if(ne){ne.style.display=st(f.name)?'none':'block';if(!st(f.name))ok=false;}
-  const ve=document.getElementById('err-vintage');
-  if(ve){const bad=f.vintage&&(+f.vintage<1900||+f.vintage>2030);ve.style.display=bad?'block':'none';if(bad)ok=false;}
-  const ae=document.getElementById('err-alcohol');
-  if(ae){const bad=f.alcohol&&(+f.alcohol<0||+f.alcohol>100);ae.style.display=bad?'block':'none';if(bad)ok=false;}
-  if(!ok)return;
+
+  // 유효성 검사 - 탭 0으로 이동 후 에러 표시
+  if(!st(f.name)){
+    switchFormTab(0);
+    setTimeout(()=>{
+      const ne=document.getElementById('err-name');
+      if(ne)ne.style.display='block';
+    },50);
+    showToast('⚠️ 와인 이름을 입력해주세요');
+    return;
+  }
+  if(f.vintage&&(+f.vintage<1900||+f.vintage>2030)){
+    switchFormTab(0);
+    setTimeout(()=>{
+      const ve=document.getElementById('err-vintage');
+      if(ve)ve.style.display='block';
+    },50);
+    showToast('⚠️ 빈티지는 1900~2030 사이로 입력해주세요');
+    return;
+  }
   const wine={
     id:f.id||uid(),
     name:st(f.name), producer:st(f.producer)||null,
@@ -1370,7 +1413,7 @@ async function submitForm(){
     drank_at:f.has_tasting&&f.drank_at?f.drank_at:null,
   };
   // 이미지: base64면 Storage에 업로드 후 URL로 교체
-  const btn=document.querySelector('#form-screen .btn-red');
+  const btn=document.getElementById('submit-btn');
   if(btn){btn.disabled=true;btn.textContent='저장 중...';}
   try{
     if(wine.user_image_url&&wine.user_image_url.startsWith('data:')){
@@ -1388,7 +1431,8 @@ async function submitForm(){
     renderMainContent();
   }catch(err){
     showToast('❌ 저장 실패: '+err.message);
-    if(btn){btn.disabled=false;btn.textContent='저장';}
+    const b2=document.getElementById('submit-btn');
+    if(b2){b2.disabled=false;b2.textContent='저장하기';}
   }
 }
 
