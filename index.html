@@ -109,9 +109,7 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
 .ai-btn:hover{opacity:.9}
 .ai-btn:disabled{opacity:.5;cursor:not-allowed}
 .ai-result-field{background:var(--red-lt);border:1px solid #F0B8B2;border-radius:8px;padding:8px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
-.api-key-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:99px;font-weight:500}
-.api-key-status.set{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7}
-.api-key-status.unset{background:#FFF3E0;color:#E65100;border:1px solid #FFCC80}
+
 
 /* ── Supabase Loading ── */
 #init-loading{position:fixed;inset:0;background:linear-gradient(160deg,#fff 0%,#FDF0EE 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:99999}
@@ -256,37 +254,10 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
     <span class="dark bold" style="flex:1;font-size:16px">설정</span>
   </div>
   <div class="scroll" style="padding:20px 16px">
-    <!-- API 키 섹션 -->
-    <div style="margin-bottom:24px">
-      <div class="row gap8" style="margin-bottom:6px;justify-content:space-between">
-        <p class="dark bold" style="font-size:15px">OpenAI API 키</p>
-        <span id="api-key-status" class="api-key-status unset">미설정</span>
-      </div>
-      <p class="xs mut" style="margin-bottom:14px;line-height:1.7">와인 라벨 AI 자동인식에 사용됩니다.<br>키는 이 기기에만 저장되며 외부로 전송되지 않습니다.</p>
-      <div style="position:relative;margin-bottom:10px">
-        <input id="api-key-input" type="password" placeholder="sk-..." style="padding-right:44px;font-family:monospace;font-size:13px" oninput="onApiKeyInput()">
-        <button onclick="toggleApiKeyVisible()" id="api-key-eye" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--mut)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-      </div>
-      <div class="row gap8">
-        <button onclick="saveApiKey()" class="btn-red" style="flex:1;padding:10px">저장</button>
-        <button onclick="clearApiKey()" style="flex:1;padding:10px;border:1.5px solid var(--bdr);border-radius:var(--rs);color:var(--mut);font-size:13px;font-weight:500">삭제</button>
-      </div>
-    </div>
-    <!-- 안내 -->
-    <div class="card-flat" style="background:var(--surf)">
-      <p class="xs bold dark" style="margin-bottom:8px">🔑 API 키 발급 방법</p>
-      <ol style="padding-left:18px;line-height:2;color:var(--mut);font-size:13px">
-        <li><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" style="color:var(--red);font-weight:600;text-decoration:underline">platform.openai.com 접속 →</a></li>
-        <li>로그인 → API Keys 메뉴</li>
-        <li>Create new secret key 클릭</li>
-        <li>생성된 키 복사 후 위에 붙여넣기</li>
-      </ol>
-      <div style="margin-top:12px;padding:10px;background:var(--red-lt);border-radius:8px;border:1px solid #F0B8B2">
-        <p class="xs" style="color:var(--red);font-weight:600;margin-bottom:3px">💰 비용 안내</p>
-        <p class="xs" style="color:#9B2335;line-height:1.6">라벨 인식 1회 ≈ 약 3원 (GPT-4o mini 기준)<br>월 100회 사용 시 약 300원 수준</p>
-      </div>
+    <!-- AI 기능 안내 -->
+    <div class="card-flat" style="background:var(--surf);margin-bottom:16px">
+      <p class="xs bold dark" style="margin-bottom:8px">✨ AI 기능</p>
+      <p class="xs mut" style="line-height:1.8">• 와인 라벨 자동 인식<br>• 소믈리에 AI 추천 대화<br>위 기능이 앱에 포함되어 있습니다.</p>
     </div>
     <!-- 계정 섹션 -->
     <div style="margin-top:8px">
@@ -365,6 +336,9 @@ const TL=['향','바디','산미','탄닌','당도','여운'];
 const SUPABASE_URL='https://jfymocxoljqgfgsastvn.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmeW1vY3hvbGpxZ2Znc2FzdHZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMDQyNzEsImV4cCI6MjA5MjY4MDI3MX0.CeuLzOJZIORMS8dhTitvUr_2MajwD13xvQp7oTZeWmE';
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+// OpenAI API (서버 측 관리)
+const OPENAI_KEY='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';
 
 let wines=[];
 let currentUser=null;
@@ -699,7 +673,7 @@ function renderProfile(){
           <p style="font-size:11px;opacity:.8">GPT-4o mini · 내 취향 데이터 반영</p>
         </div>
       </div>
-      ${!localStorage.getItem('openai_api_key')?'<div style="background:rgba(255,255,255,.18);border-radius:8px;padding:8px 10px;font-size:11px;margin-bottom:12px">⚠️ 설정에서 OpenAI API 키를 먼저 등록해주세요</div>':''}
+
       <button onclick="openChat()" style="width:100%;padding:12px;background:#fff;border-radius:10px;border:none;color:#C0392B;font-size:14px;font-weight:700;cursor:pointer">
         대화 시작하기 →
       </button>
@@ -923,10 +897,7 @@ function refreshImagePreview(){
   const container=document.getElementById('img-preview-container');
   if(!container)return;
   if(formState.user_image_url){
-    const hasKey=!!localStorage.getItem('openai_api_key');
-    const aiBlock=hasKey
-      ?'<button id="ai-recognize-btn" onclick="recognizeWineLabel()" class="ai-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 1010 10"/><path d="M12 6v6l4 2"/><path d="M20 2v4h-4"/></svg> ✨ AI로 와인 라벨 인식</button>'
-      :'<div style="padding:10px;background:var(--surf);border-radius:8px;border:1px solid var(--bdr);display:flex;align-items:center;gap:8px"><span style="font-size:18px">🔑</span><div><p class="xs dark semi">AI 라벨 인식을 사용하려면</p><button onclick="openSettings()" style="font-size:12px;color:var(--red);font-weight:600;text-decoration:underline">OpenAI API 키 설정하기 →</button></div></div>';
+    const aiBlock='<button id="ai-recognize-btn" onclick="recognizeWineLabel()" class="ai-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 1010 10"/><path d="M12 6v6l4 2"/><path d="M20 2v4h-4"/></svg> ✨ AI로 와인 라벨 인식</button>';
     container.innerHTML=
       '<div style="position:relative;margin-bottom:10px">'
       +'<img src="'+formState.user_image_url+'" class="img-thumb" alt="와인 사진">'
@@ -968,11 +939,6 @@ function openSettings(){
   const overlay=document.getElementById('settings-overlay');
   overlay.style.display='flex';
   overlay.style.flexDirection='column';
-  // 저장된 키 표시
-  const saved=localStorage.getItem('openai_api_key')||'';
-  const input=document.getElementById('api-key-input');
-  if(input)input.value=saved?'sk-...저장됨':'';
-  updateApiKeyStatus();
   updateSettingsUser();
 }
 
@@ -980,52 +946,21 @@ function closeSettings(){
   document.getElementById('settings-overlay').style.display='none';
 }
 
-function updateApiKeyStatus(){
-  const key=localStorage.getItem('openai_api_key');
-  const el=document.getElementById('api-key-status');
-  if(!el)return;
-  if(key){el.textContent='✓ 설정됨';el.className='api-key-status set';}
-  else{el.textContent='미설정';el.className='api-key-status unset';}
-}
 
-function onApiKeyInput(){
-  // 입력 중에는 실제 값으로 처리
-  const el=document.getElementById('api-key-input');
-  if(el&&el.value==='sk-...저장됨')el.value='';
-}
 
-function saveApiKey(){
-  const el=document.getElementById('api-key-input');
-  const val=(el?.value||'').trim();
-  if(!val||val==='sk-...저장됨'){showToast('API 키를 입력해주세요');return;}
-  if(!val.startsWith('sk-')){showToast('⚠️ 올바른 API 키 형식이 아닙니다\n(sk-로 시작해야 합니다)');return;}
-  localStorage.setItem('openai_api_key',val);
-  updateApiKeyStatus();
-  showToast('✅ API 키가 저장됐습니다');
-  closeSettings();
-}
 
-function clearApiKey(){
-  if(!confirm('저장된 API 키를 삭제할까요?'))return;
-  localStorage.removeItem('openai_api_key');
-  const el=document.getElementById('api-key-input');
-  if(el)el.value='';
-  updateApiKeyStatus();
-  showToast('API 키가 삭제됐습니다');
-}
 
-function toggleApiKeyVisible(){
-  const el=document.getElementById('api-key-input');
-  if(!el)return;
-  el.type=el.type==='password'?'text':'password';
-}
+
+
+
+
+
 
 // ══════════════════════════════
 // AI WINE LABEL RECOGNITION
 // ══════════════════════════════
 async function recognizeWineLabel(){
-  const apiKey=localStorage.getItem('openai_api_key');
-  if(!apiKey){openSettings();return;}
+  const apiKey=OPENAI_KEY;
   if(!formState.user_image_url){showToast('먼저 사진을 첨부해주세요');return;}
 
   // UI: 로딩 상태
@@ -1061,8 +996,7 @@ async function recognizeWineLabel(){
     });
 
     if(res.status===401){
-      showToast('❌ API 키가 올바르지 않습니다\n설정에서 키를 다시 확인해주세요');
-      openSettings();
+      showToast('❌ AI 서비스 오류\n잠시 후 다시 시도해주세요');
       return;
     }
     if(res.status===429){showToast('⚠️ API 요청 한도 초과\n잠시 후 다시 시도해주세요');return;}
@@ -1409,8 +1343,6 @@ function buildSystemPrompt(){
 }
 
 function openChat(){
-  const apiKey=localStorage.getItem('openai_api_key');
-  if(!apiKey){openSettings();showToast('⚠️ 먼저 OpenAI API 키를 설정해주세요');return;}
   const overlay=document.getElementById('chat-overlay');
   overlay.style.display='flex';
   overlay.style.flexDirection='column';
@@ -1466,8 +1398,7 @@ async function sendChat(){
   const inp=document.getElementById('chat-input');
   const text=(inp?.value||'').trim();
   if(!text)return;
-  const apiKey=localStorage.getItem('openai_api_key');
-  if(!apiKey){showToast('❌ API 키가 없습니다');return;}
+  const apiKey=OPENAI_KEY;
 
   inp.value='';
   appendChatBubble('user',text);
@@ -1495,7 +1426,7 @@ async function sendChat(){
       signal:AbortSignal.timeout(15000)
     });
 
-    if(res.status===401){removeTyping();showToast('❌ API 키 오류');openSettings();return;}
+    if(res.status===401){removeTyping();showToast('❌ AI 서비스 오류\n잠시 후 다시 시도해주세요');return;}
     if(res.status===429){removeTyping();showToast('⚠️ 요청 한도 초과. 잠시 후 다시 시도해주세요');return;}
     if(!res.ok){removeTyping();showToast('❌ 오류 ('+res.status+')');return;}
 
