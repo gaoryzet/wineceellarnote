@@ -11,6 +11,18 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="와인창고">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<meta property="og:title" content="Wine Cellar Note 🍷">
+<meta property="og:description" content="내가 마신 와인을 기억하고 다음 선택을 더 잘하세요">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://wineceellarnote.vercel.app">
+<meta property="og:image" content="https://wineceellarnote.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Wine Cellar Note">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Wine Cellar Note 🍷">
+<meta name="twitter:description" content="내가 마신 와인을 기억하고 다음 선택을 더 잘하세요">
+<meta name="description" content="내가 마신 와인을 기억하고, 취향을 분석하고, 다음 선택을 더 잘하는 개인 와인 관리 앱">
 <title>Wine Cellar Note 🍷</title>
 <style>
 :root{
@@ -128,6 +140,9 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
 @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
 .preset-btn{padding:8px 12px;border-radius:99px;font-size:12px;font-weight:500;border:1px solid var(--bdr);background:#fff;color:var(--body);text-align:left;transition:all .15s;cursor:pointer}
 .preset-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-lt)}
+
+/* ── InApp Browser ── */
+#inapp-overlay{position:fixed;inset:0;background:#fff;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px;text-align:center}
 </style>
 </head>
 <body>
@@ -136,6 +151,23 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
   <div style="font-size:48px">🍷</div>
   <div class="spinner"></div>
   <p style="font-size:13px;color:var(--mut)">연결 중...</p>
+</div>
+<!-- 인앱 브라우저 안내 -->
+<div id="inapp-overlay" style="display:none">
+  <div style="font-size:64px;margin-bottom:20px">🍷</div>
+  <h2 style="font-size:22px;font-weight:700;color:#1A1A1A;margin-bottom:10px;letter-spacing:-.3px">Wine Cellar Note</h2>
+  <p style="font-size:14px;color:#6B7280;line-height:1.8;margin-bottom:28px">카카오톡 브라우저에서는<br>일부 기능이 제한됩니다.<br>외부 브라우저에서 열어주세요.</p>
+  <div style="background:#F3F4F6;border-radius:12px;padding:14px 18px;margin-bottom:24px;width:100%">
+    <p style="font-size:11px;color:#9CA3AF;margin-bottom:6px">앱 주소</p>
+    <p style="font-size:13px;font-weight:600;color:#374151;word-break:break-all">wineceellarnote.vercel.app</p>
+  </div>
+  <button onclick="copyLink()" style="width:100%;padding:14px;background:#C0392B;color:#fff;border-radius:12px;border:none;font-size:15px;font-weight:700;margin-bottom:10px;cursor:pointer">
+    🔗 링크 복사하기
+  </button>
+  <p style="font-size:12px;color:#9CA3AF;line-height:1.7">복사 후 Chrome 또는 Safari를 열어<br>주소창에 붙여넣기 해주세요</p>
+  <div style="margin-top:24px;padding:12px;background:#FEF3C7;border-radius:10px;width:100%">
+    <p style="font-size:12px;color:#92400E;line-height:1.7">📱 <strong>아이폰</strong>: 우측 하단 <strong>···</strong> → Safari로 열기<br>🤖 <strong>안드로이드</strong>: 우측 상단 <strong>⋮</strong> → 다른 브라우저로 열기</p>
+  </div>
 </div>
 <div id="app"><div id="shell">
 
@@ -329,6 +361,53 @@ const PLACES=['이마트','홈플러스','롯데마트','코스트코','와인�
 const TAGS=['가볍다','묵직하다','달다','드라이하다','부드럽다','떫다','향이 좋다','향이 별로','산미가 있다','음식과 잘 맞았다','다시 사고 싶다','선물용으로 좋겠다'];
 const TK=['aroma','body','acidity','tannin','sweetness','finish'];
 const TL=['향','바디','산미','탄닌','당도','여운'];
+
+
+// ══════════════════════════════
+// INAPP BROWSER DETECTION
+// ══════════════════════════════
+(function detectInApp(){
+  const ua=navigator.userAgent||'';
+  const isKakao=ua.includes('KAKAOTALK')||ua.includes('KAKAO');
+  const isNaver=ua.includes('NAVER');
+  const isFacebook=ua.includes('FBAN')||ua.includes('FBAV');
+  const isInstagram=ua.includes('Instagram');
+  const isLine=ua.includes('Line/');
+  const isInApp=isKakao||isNaver||isFacebook||isInstagram||isLine;
+  if(isInApp){
+    document.getElementById('inapp-overlay').style.display='flex';
+    // 앱/로딩 화면 숨기기
+    const appEl=document.getElementById('app');
+    const loadEl=document.getElementById('init-loading');
+    if(appEl)appEl.style.display='none';
+    if(loadEl)loadEl.style.display='none';
+  }
+})();
+
+function copyLink(){
+  const url='https://wineceellarnote.vercel.app';
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>{
+      const btn=event.currentTarget;
+      const orig=btn.textContent;
+      btn.textContent='✅ 복사됐습니다!';
+      btn.style.background='#2EAD6B';
+      setTimeout(()=>{btn.textContent=orig;btn.style.background='#C0392B';},2000);
+    }).catch(()=>fallbackCopy(url));
+  } else {
+    fallbackCopy(url);
+  }
+}
+
+function fallbackCopy(url){
+  const el=document.createElement('textarea');
+  el.value=url;el.style.position='fixed';el.style.opacity='0';
+  document.body.appendChild(el);el.select();
+  try{document.execCommand('copy');
+    alert('링크가 복사됐습니다!\n브라우저 주소창에 붙여넣기 해주세요.');
+  }catch(e){alert('주소창에 직접 입력해주세요:\n'+url);}
+  document.body.removeChild(el);
+}
 
 // ══════════════════════════════
 // SUPABASE CONFIG
