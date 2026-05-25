@@ -118,6 +118,18 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
 .spinner{width:36px;height:36px;border:3px solid rgba(192,57,43,.2);border-top-color:#C0392B;border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #hdr-avatar{width:26px;height:26px;border-radius:13px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+
+/* ── Sommelier Chat ── */
+#chat-overlay{position:fixed;inset:0;background:var(--bg);z-index:9997;display:flex;flex-direction:column}
+.chat-bubble-user{background:var(--red);color:#fff;border-radius:18px 18px 4px 18px;padding:10px 14px;font-size:14px;line-height:1.6;max-width:82%;align-self:flex-end;margin-bottom:8px}
+.chat-bubble-ai{background:#fff;border:1px solid var(--bdr);border-radius:18px 18px 18px 4px;padding:10px 14px;font-size:14px;line-height:1.6;max-width:82%;align-self:flex-start;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.chat-typing{display:flex;gap:5px;align-items:center;padding:10px 14px;background:#fff;border:1px solid var(--bdr);border-radius:18px 18px 18px 4px;align-self:flex-start}
+.chat-typing span{width:7px;height:7px;border-radius:50%;background:var(--red);animation:bounce 1.2s infinite}
+.chat-typing span:nth-child(2){animation-delay:.2s}
+.chat-typing span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.preset-btn{padding:8px 12px;border-radius:99px;font-size:12px;font-weight:500;border:1px solid var(--bdr);background:#fff;color:var(--body);text-align:left;transition:all .15s;cursor:pointer}
+.preset-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-lt)}
 </style>
 </head>
 <body>
@@ -290,6 +302,34 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
     </div>
   </div>
 </div>
+
+<!-- sommelier chat overlay -->
+<div id="chat-overlay" style="display:none">
+  <div class="topbar">
+    <button onclick="closeChat()" style="font-size:20px;color:var(--red);padding:0 4px;line-height:1">←</button>
+    <div style="flex:1">
+      <p class="dark bold" style="font-size:15px">🍷 소믈리에 AI</p>
+      <p class="xxs mut">GPT-4o mini 기반 와인 어드바이저</p>
+    </div>
+    <button onclick="clearChat()" class="xxs mut" style="padding:4px 8px;border:1px solid var(--bdr);border-radius:6px;background:none">대화 초기화</button>
+  </div>
+  <div id="chat-messages" class="scroll" style="padding:14px;display:flex;flex-direction:column;background:var(--surf)"></div>
+  <!-- 프리셋 버튼 -->
+  <div id="chat-presets" style="padding:10px 14px;display:flex;gap:6px;overflow-x:auto;background:var(--bg2);border-top:1px solid var(--bdr);flex-wrap:nowrap;flex-shrink:0">
+    <button class="preset-btn" style="flex-shrink:0" onclick="sendPreset('오늘 마시기 좋은 와인 추천해줘')">오늘 마실 와인 🍷</button>
+    <button class="preset-btn" style="flex-shrink:0" onclick="sendPreset('선물용 와인 추천해줘. 5만원대로')">선물용 추천 🎁</button>
+    <button class="preset-btn" style="flex-shrink:0" onclick="sendPreset('스테이크에 어울리는 와인은?')">스테이크 페어링 🥩</button>
+    <button class="preset-btn" style="flex-shrink:0" onclick="sendPreset('내 취향에 맞는 새로운 와인 알려줘')">내 취향 추천 ✨</button>
+    <button class="preset-btn" style="flex-shrink:0" onclick="sendPreset('초보자에게 좋은 입문용 와인은?')">입문 와인 🌱</button>
+  </div>
+  <!-- 입력창 -->
+  <div class="row gap8" style="padding:10px 14px;background:var(--bg2);border-top:1px solid var(--bdr);flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom))">
+    <input id="chat-input" type="text" placeholder="무엇이든 물어보세요..." style="flex:1;border-radius:22px;padding:10px 16px;font-size:14px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">
+    <button onclick="sendChat()" id="chat-send-btn" style="width:40px;height:40px;border-radius:20px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
 </div></div>
 
 <script>
@@ -394,16 +434,38 @@ async function dbDeleteWine(id){
 async function uploadImageToStorage(dataUrl){
   if(!dataUrl||!dataUrl.startsWith('data:'))return dataUrl;
   try{
-    const res=await fetch(dataUrl);
+    // 이미지 압축 (canvas로 리사이즈 → 최대 800px, quality 0.75)
+    const compressed=await new Promise(resolve=>{
+      const img=new Image();
+      img.onload=()=>{
+        const MAX=800;
+        let w=img.width,h=img.height;
+        if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+        if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+        const cv=document.createElement('canvas');
+        cv.width=w;cv.height=h;
+        cv.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(cv.toDataURL('image/jpeg',0.75));
+      };
+      img.onerror=()=>resolve(dataUrl);
+      img.src=dataUrl;
+    });
+    const res=await fetch(compressed);
     const blob=await res.blob();
-    const ext=(blob.type.split('/')[1])||'jpg';
-    const path=currentUser.id+'/'+Date.now()+'.'+ext;
+    const path=currentUser.id+'/'+Date.now()+'.jpg';
+    // 10초 타임아웃
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),10000);
     const{error}=await sb.storage.from('wine-images')
-      .upload(path,blob,{contentType:blob.type,upsert:false});
-    if(error)return null;
+      .upload(path,blob,{contentType:'image/jpeg',upsert:false});
+    clearTimeout(timer);
+    if(error){console.warn('이미지 업로드 실패(텍스트만 저장):', error.message);return null;}
     const{data:{publicUrl}}=sb.storage.from('wine-images').getPublicUrl(path);
     return publicUrl;
-  }catch(e){return null;}
+  }catch(e){
+    console.warn('이미지 업로드 오류(텍스트만 저장):', e.message);
+    return null;
+  }
 }
 
 // ── 헤더 사용자 표시 ──────────────────
@@ -628,6 +690,20 @@ function renderProfile(){
       <p class="xxs light" style="margin-top:3px">${priced.length}개 와인 기준</p>
     </div>`:''}`
     :`<div style="text-align:center;padding:44px 0;line-height:2.2"><div style="font-size:40px;margin-bottom:10px">📊</div><div class="sm mut">시음 기록을 추가하면<br>취향 분석이 시작됩니다</div></div>`}
+    <!-- 소믈리에 AI 섹션 -->
+    <div style="margin-top:16px;background:linear-gradient(135deg,#8B0000,#C0392B);border-radius:16px;padding:18px;color:#fff;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:28px">🍷</span>
+        <div>
+          <p style="font-size:15px;font-weight:700;margin-bottom:2px">소믈리에 AI에게 물어보기</p>
+          <p style="font-size:11px;opacity:.8">GPT-4o mini · 내 취향 데이터 반영</p>
+        </div>
+      </div>
+      ${!localStorage.getItem('openai_api_key')?'<div style="background:rgba(255,255,255,.18);border-radius:8px;padding:8px 10px;font-size:11px;margin-bottom:12px">⚠️ 설정에서 OpenAI API 키를 먼저 등록해주세요</div>':''}
+      <button onclick="openChat()" style="width:100%;padding:12px;background:#fff;border-radius:10px;border:none;color:#C0392B;font-size:14px;font-weight:700;cursor:pointer">
+        대화 시작하기 →
+      </button>
+    </div>
   </div>`;
 }
 
@@ -1292,6 +1368,157 @@ function toggleTorch(){
   btn.style.background=torchOn?'rgba(255,220,0,.4)':'rgba(255,255,255,.15)';
 }
 
+
+// ══════════════════════════════
+// SOMMELIER AI CHAT
+// ══════════════════════════════
+let chatHistory=[];  // session 내 대화 유지
+
+function buildSystemPrompt(){
+  // 사용자 취향 데이터 수집 (상위 20개)
+  const tasted=wines.filter(w=>w.rating!=null).sort((a,b)=>(b.rating||0)-(a.rating||0)).slice(0,20);
+  const stored=wines.filter(w=>w.status==='stored').slice(0,10);
+
+  let context='당신은 친근하고 전문적인 소믈리에 AI입니다. 한국어로 답변하세요. 답변은 200자 이내로 간결하게.\n\n';
+
+  if(tasted.length>0){
+    context+='[사용자 시음 기록]\n';
+    tasted.forEach(w=>{
+      context+=`- ${w.name||''}${w.vintage?` ${w.vintage}`:''}${w.country?` (${w.country})`:''}${w.wine_type?` ${w.wine_type}`:''}: ★${w.rating||'-'}${w.memo?` / ${w.memo.slice(0,30)}`:''}
+`;
+    });
+    // 취향 요약
+    const countries={};tasted.forEach(w=>{if(w.country&&(w.rating||0)>=4)countries[w.country]=(countries[w.country]||0)+1;});
+    const topC=Object.entries(countries).sort((a,b)=>b[1]-a[1])[0]?.[0];
+    const types={};tasted.forEach(w=>{if(w.wine_type)types[w.wine_type]=(types[w.wine_type]||0)+(w.rating||0);});
+    const topT=Object.entries(types).sort((a,b)=>b[1]-a[1])[0]?.[0];
+    const avgR=tasted.length?(tasted.reduce((s,w)=>s+(w.rating||0),0)/tasted.length).toFixed(1):null;
+    context+=`
+[취향 요약] 선호국가: ${topC||'미상'}, 선호타입: ${topT||'미상'}, 평균별점: ${avgR||'-'}
+`;
+  }
+  if(stored.length>0){
+    context+=`
+[현재 보관 중인 와인] ${stored.map(w=>`${w.name||''}${w.vintage?` ${w.vintage}`:''}`).join(', ')}
+`;
+  }
+  if(tasted.length===0&&stored.length===0){
+    context+='[와인 기록 없음] 아직 기록이 없습니다. 일반적인 와인 추천과 정보를 제공하세요.\n';
+  }
+  return context;
+}
+
+function openChat(){
+  const apiKey=localStorage.getItem('openai_api_key');
+  if(!apiKey){openSettings();showToast('⚠️ 먼저 OpenAI API 키를 설정해주세요');return;}
+  const overlay=document.getElementById('chat-overlay');
+  overlay.style.display='flex';
+  overlay.style.flexDirection='column';
+  if(chatHistory.length===0){
+    // 첫 인사
+    appendChatBubble('ai','안녕하세요! 와인 소믈리에 AI입니다 🍷\n어떤 와인이 궁금하신가요? 추천, 페어링, 취향 분석 등 무엇이든 물어보세요!');
+  }
+}
+
+function closeChat(){
+  document.getElementById('chat-overlay').style.display='none';
+}
+
+function clearChat(){
+  chatHistory=[];
+  document.getElementById('chat-messages').innerHTML='';
+  appendChatBubble('ai','대화가 초기화됐습니다 🍷\n새로운 질문을 입력해주세요!');
+}
+
+function appendChatBubble(role,text){
+  const wrap=document.getElementById('chat-messages');
+  if(!wrap)return;
+  const div=document.createElement('div');
+  div.className=role==='user'?'chat-bubble-user':'chat-bubble-ai';
+  div.textContent=text;
+  wrap.appendChild(div);
+  wrap.scrollTop=wrap.scrollHeight;
+}
+
+function showTyping(){
+  const wrap=document.getElementById('chat-messages');
+  if(!wrap)return null;
+  const div=document.createElement('div');
+  div.className='chat-typing';div.id='typing-indicator';
+  div.innerHTML='<span></span><span></span><span></span>';
+  wrap.appendChild(div);
+  wrap.scrollTop=wrap.scrollHeight;
+  return div;
+}
+
+function removeTyping(){
+  const el=document.getElementById('typing-indicator');
+  if(el)el.remove();
+}
+
+function sendPreset(text){
+  const inp=document.getElementById('chat-input');
+  if(inp)inp.value=text;
+  sendChat();
+}
+
+async function sendChat(){
+  const inp=document.getElementById('chat-input');
+  const text=(inp?.value||'').trim();
+  if(!text)return;
+  const apiKey=localStorage.getItem('openai_api_key');
+  if(!apiKey){showToast('❌ API 키가 없습니다');return;}
+
+  inp.value='';
+  appendChatBubble('user',text);
+
+  // 대화 기록에 추가
+  chatHistory.push({role:'user',content:text});
+  // 최대 10턴 유지 (토큰 절약)
+  if(chatHistory.length>20)chatHistory=chatHistory.slice(-20);
+
+  // 타이핑 인디케이터
+  showTyping();
+  const sendBtn=document.getElementById('chat-send-btn');
+  if(sendBtn)sendBtn.style.opacity='.4';
+
+  try{
+    const messages=[
+      {role:'system',content:buildSystemPrompt()},
+      ...chatHistory
+    ];
+
+    const res=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({model:'gpt-4o-mini',max_tokens:300,temperature:0.7,messages}),
+      signal:AbortSignal.timeout(15000)
+    });
+
+    if(res.status===401){removeTyping();showToast('❌ API 키 오류');openSettings();return;}
+    if(res.status===429){removeTyping();showToast('⚠️ 요청 한도 초과. 잠시 후 다시 시도해주세요');return;}
+    if(!res.ok){removeTyping();showToast('❌ 오류 ('+res.status+')');return;}
+
+    const data=await res.json();
+    const reply=data.choices?.[0]?.message?.content||'답변을 생성하지 못했습니다.';
+
+    // AI 답변 저장
+    chatHistory.push({role:'assistant',content:reply});
+    removeTyping();
+    appendChatBubble('ai',reply);
+
+  }catch(err){
+    removeTyping();
+    if(err.name==='TimeoutError'||err.name==='AbortError'){
+      showToast('⏱ 응답 시간 초과. 다시 시도해주세요');
+    } else {
+      showToast('❌ 오류: '+(err.message||'알 수 없는 오류'));
+    }
+  }finally{
+    if(sendBtn)sendBtn.style.opacity='1';
+  }
+}
+
 // ══════════════════════════════
 // TOAST
 // ══════════════════════════════
@@ -1426,9 +1653,14 @@ async function submitForm(){
     return;
   }
 
-  // 버튼 로딩 상태
+  // 버튼 로딩 상태 + 20초 안전 타임아웃
   const btn=document.getElementById('submit-btn');
+  const resetBtn=()=>{if(btn){btn.disabled=false;btn.textContent='저장';}};
   if(btn){btn.disabled=true;btn.textContent='저장 중...';}
+  const safetyTimer=setTimeout(()=>{
+    resetBtn();
+    showToast('⏱ 저장 시간이 초과됐습니다\n네트워크를 확인해주세요');
+  },20000);
 
   try{
     // wine 객체 생성 (try 안으로 이동 — 에러 발생 시 catch로 처리)
@@ -1476,7 +1708,9 @@ async function submitForm(){
   }catch(err){
     console.error('submitForm error:', err);
     showToast('❌ 저장 실패: '+(err?.message||'알 수 없는 오류'));
-    if(btn){btn.disabled=false;btn.textContent='저장';}
+  }finally{
+    clearTimeout(safetyTimer);
+    resetBtn();
   }
 }
 
