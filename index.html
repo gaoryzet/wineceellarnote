@@ -149,7 +149,7 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
 <div id="init-loading">
   <div style="font-size:48px">🍷</div>
   <div class="spinner"></div>
-  <p style="font-size:13px;color:var(--mut)">연결 중...</p>
+  <p id="t-connecting" style="font-size:13px;color:var(--mut)">연결 중...</p>
 </div>
 <!-- 인앱 브라우저 안내 -->
 <div id="inapp-overlay" style="display:none">
@@ -182,13 +182,13 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
       </svg>
     </div>
     <h1 style="font-size:28px;font-weight:700;color:var(--dark);letter-spacing:-.3px;margin-bottom:8px">Wine Cellar Note</h1>
-    <p class="sm" style="color:var(--mut);line-height:1.8">내가 마신 와인을 기억하고<br>다음 선택을 더 잘하세요</p>
+    <p id="t-login-tagline" class="sm" style="color:var(--mut);line-height:1.8"></p>
   </div>
   <button id="btn-login" style="width:100%;padding:14px;background:#fff;border-radius:12px;border:1.5px solid var(--bdr);display:flex;align-items:center;justify-content:center;gap:12px;font-size:15px;font-weight:600;color:var(--dark);box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .15s" onmouseenter="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseleave="this.style.boxShadow='0 2px 8px rgba(0,0,0,.08)'">
     <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-    Google로 계속하기
+    <span id="t-login-google">Google로 계속하기</span>
   </button>
-  <p class="xxs" style="color:var(--light);margin-top:20px;text-align:center">로그인 시 이용약관 및 개인정보처리방침에 동의합니다</p>
+  <p id="t-login-terms" class="xxs" style="color:var(--light);margin-top:20px;text-align:center"></p>
 </div>
 
 <!-- ── MAIN ── -->
@@ -211,13 +211,13 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
   <div id="main-content" style="flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative;background:var(--bg)"></div>
   <nav>
     <button class="navbtn active" data-tab="home" onclick="navTo('home')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>홈
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="t-nav" data-nav="home">홈</span>
     </button>
     <button class="navbtn" data-tab="wines" onclick="navTo('wines')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>창고
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span class="t-nav" data-nav="cellar">창고</span>
     </button>
     <button class="navbtn" data-tab="profile" onclick="navTo('profile')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>취향
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span class="t-nav" data-nav="taste">취향</span>
     </button>
   </nav>
 </div>
@@ -282,17 +282,17 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
 <div id="settings-overlay" style="display:none">
   <div class="topbar">
     <button onclick="closeSettings()" style="font-size:20px;color:var(--red);padding:0 4px;line-height:1">←</button>
-    <span class="dark bold" style="flex:1;font-size:16px">설정</span>
+    <span id="t-settings-title" class="dark bold" style="flex:1;font-size:16px">설정</span>
   </div>
   <div class="scroll" style="padding:20px 16px">
     <!-- AI 기능 안내 -->
     <div class="card-flat" style="background:var(--surf);margin-bottom:16px">
-      <p class="xs bold dark" style="margin-bottom:8px">✨ AI 기능</p>
-      <p class="xs mut" style="line-height:1.8">• 와인 라벨 자동 인식<br>• 소믈리에 AI 추천 대화<br>위 기능이 앱에 포함되어 있습니다.</p>
+      <p id="t-ai-feature-title" class="xs bold dark" style="margin-bottom:8px">✨ AI 기능</p>
+      <p id="t-ai-feature-desc" class="xs mut" style="line-height:1.8"></p>
     </div>
     <!-- 계정 섹션 -->
     <div style="margin-top:8px">
-      <p class="xs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">계정</p>
+      <p id="t-account" class="xs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">계정</p>
       <div id="settings-user-info" class="card-flat" style="margin-bottom:10px;display:flex;align-items:center;gap:12px">
         <div id="settings-avatar" style="width:40px;height:40px;border-radius:20px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0"></div>
         <div style="flex:1;min-width:0">
@@ -300,7 +300,11 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
           <p id="settings-user-email" class="xs mut" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></p>
         </div>
       </div>
-      <button onclick="signOut()" style="width:100%;padding:12px;border:1.5px solid var(--danger);border-radius:var(--rs);color:var(--danger);font-size:13px;font-weight:600;background:none;transition:all .15s" onmouseenter="this.style.background='var(--red-lt)'" onmouseleave="this.style.background='none'">로그아웃</button>
+      <button onclick="signOut()" style="width:100%;padding:12px;border:1.5px solid var(--danger);border-radius:var(--rs);color:var(--danger);font-size:13px;font-weight:600;background:none;transition:all .15s" onmouseenter="this.style.background='var(--red-lt)'" onmouseleave="this.style.background='none'"><span id="t-logout">로그아웃</span></button>
+    </div>
+    <!-- 법적 고지 -->
+    <div style="margin-top:24px;text-align:center">
+      <a href="privacy.html" target="_blank" id="t-privacy-link" style="font-size:12px;color:var(--mut);text-decoration:underline">개인정보처리방침</a>
     </div>
   </div>
 </div>
@@ -310,23 +314,23 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
   <div class="topbar">
     <button onclick="closeChat()" style="font-size:20px;color:var(--red);padding:0 4px;line-height:1">←</button>
     <div style="flex:1">
-      <p class="dark bold" style="font-size:15px">🍷 소믈리에 AI</p>
-      <p class="xxs mut">GPT-4o mini 기반 와인 어드바이저</p>
+      <p id="t-chat-title" class="dark bold" style="font-size:15px">🍷 소믈리에 AI</p>
+      <p id="t-chat-sub" class="xxs mut">GPT-4o mini 기반 와인 어드바이저</p>
     </div>
-    <button onclick="clearChat()" class="xxs mut" style="padding:4px 8px;border:1px solid var(--bdr);border-radius:6px;background:none">대화 초기화</button>
+    <button id="t-chat-reset" onclick="clearChat()" class="xxs mut" style="padding:4px 8px;border:1px solid var(--bdr);border-radius:6px;background:none">대화 초기화</button>
   </div>
   <div id="chat-messages" class="scroll" style="padding:14px;display:flex;flex-direction:column;background:var(--surf)"></div>
   <!-- 프리셋 버튼 -->
   <div id="chat-presets" style="padding:10px 14px;display:flex;gap:6px;overflow-x:auto;background:var(--bg2);border-top:1px solid var(--bdr);flex-wrap:nowrap;flex-shrink:0">
-    <button class="preset-btn" style="flex-shrink:0" onclick="sendPreset('오늘 마시기 좋은 와인 추천해줘')">오늘 마실 와인 🍷</button>
-    <button class="preset-btn" style="flex-shrink:0" onclick="sendPreset('선물용 와인 추천해줘. 5만원대로')">선물용 추천 🎁</button>
-    <button class="preset-btn" style="flex-shrink:0" onclick="sendPreset('스테이크에 어울리는 와인은?')">스테이크 페어링 🥩</button>
-    <button class="preset-btn" style="flex-shrink:0" onclick="sendPreset('내 취향에 맞는 새로운 와인 알려줘')">내 취향 추천 ✨</button>
-    <button class="preset-btn" style="flex-shrink:0" onclick="sendPreset('초보자에게 좋은 입문용 와인은?')">입문 와인 🌱</button>
+    <button class="preset-btn t-preset" data-p="1" style="flex-shrink:0" onclick="sendPreset(t('presetMsg1'))"></button>
+    <button class="preset-btn t-preset" data-p="2" style="flex-shrink:0" onclick="sendPreset(t('presetMsg2'))"></button>
+    <button class="preset-btn t-preset" data-p="3" style="flex-shrink:0" onclick="sendPreset(t('presetMsg3'))"></button>
+    <button class="preset-btn t-preset" data-p="4" style="flex-shrink:0" onclick="sendPreset(t('presetMsg4'))"></button>
+    <button class="preset-btn t-preset" data-p="5" style="flex-shrink:0" onclick="sendPreset(t('presetMsg5'))"></button>
   </div>
   <!-- 입력창 -->
   <div class="row gap8" style="padding:10px 14px;background:var(--bg2);border-top:1px solid var(--bdr);flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom))">
-    <input id="chat-input" type="text" placeholder="무엇이든 물어보세요..." style="flex:1;border-radius:22px;padding:10px 16px;font-size:14px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">
+    <input id="chat-input" type="text" id="chat-input-field" placeholder="무엇이든 물어보세요..." style="flex:1;border-radius:22px;padding:10px 16px;font-size:14px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">
     <button onclick="sendChat()" id="chat-send-btn" style="width:40px;height:40px;border-radius:20px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
     </button>
@@ -334,32 +338,210 @@ nav{display:flex;background:var(--bg2);border-top:1px solid var(--bdr);flex-shri
 </div>
 </div></div>
 
+<!-- 커스텀 확인 모달 -->
+<div id="confirm-modal" style="display:none;position:fixed;inset:0;z-index:100000;align-items:center;justify-content:center;padding:32px;background:rgba(0,0,0,.45)">
+  <div style="background:#fff;border-radius:18px;padding:24px 22px 18px;width:100%;max-width:320px;box-shadow:0 12px 40px rgba(0,0,0,.25)">
+    <div id="confirm-icon" style="font-size:38px;text-align:center;margin-bottom:12px">🗑️</div>
+    <p id="confirm-title" style="font-size:16px;font-weight:700;color:var(--dark);text-align:center;margin-bottom:6px">삭제할까요?</p>
+    <p id="confirm-msg" style="font-size:13px;color:var(--mut);text-align:center;line-height:1.6;margin-bottom:20px">이 작업은 되돌릴 수 없습니다.</p>
+    <div style="display:flex;gap:8px">
+      <button id="confirm-cancel" style="flex:1;padding:13px;border-radius:12px;border:1.5px solid var(--bdr);background:#fff;color:var(--mut);font-size:14px;font-weight:600;cursor:pointer">취소</button>
+      <button id="confirm-ok" style="flex:1;padding:13px;border-radius:12px;border:none;background:var(--danger);color:#fff;font-size:14px;font-weight:700;cursor:pointer">확인</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ══════════════════════════════
-// DATA
+// I18N — 언어 시스템
 // ══════════════════════════════
+// 기기 언어 감지: 한국어면 'ko', 그 외엔 'en'(영어 기본)
+const LANG = (navigator.language || 'en').toLowerCase().startsWith('ko') ? 'ko' : 'en';
+// 통화: 한국어 사용자는 원, 그 외엔 달러 기본 (추후 확장 가능)
+const CURRENCY = LANG === 'ko' ? {code:'KRW', symbol:'₩', locale:'ko-KR'} : {code:'USD', symbol:'$', locale:'en-US'};
+
+// UI 텍스트 사전 (en/ko)
+const I18N = {
+  en:{
+    appName:'Wine Cellar Note', connecting:'Connecting...',
+    loginTagline1:'Remember every wine you taste,', loginTagline2:'and choose better next time',
+    loginGoogle:'Continue with Google', loginTerms:'By signing in, you agree to the Terms & Privacy Policy',
+    navHome:'Home', navCellar:'Cellar', navTaste:'Taste',
+    myCellar:'My Cellar', myCellarSub:'Your personal wine cellar',
+    stored:'Stored', consumed:'Tasted', wishlist:'Wishlist',
+    thisMonth:'This month', drankCount:n=>`You enjoyed ${n} wine${n>1?'s':''}`,
+    recentRecords:'Recent', viewAll:'View all →',
+    emptyHome1:'No wines yet', emptyHome2:'Add your first wine from the Cellar tab!',
+    searchPlaceholder:'Search name, grape, country...', sortLabel:'Sort',
+    sortNewest:'Newest', sortRating:'Rating', sortPriceHi:'Price ↑', sortPriceLo:'Price ↓',
+    filterAll:'All', noResults:'No results',
+    bottles:n=>`${n}`, bottleUnit:'btl', countUnit:n=>`${n}`,
+    settings:'Settings', account:'Account', logout:'Log out',
+    aiFeatureTitle:'✨ AI Features', aiFeatureDesc:'• Auto wine label recognition\n• AI sommelier chat\nThese features are built into the app.',
+    privacyPolicy:'Privacy Policy', about:'About',
+    tasteAnalysis:'Taste Analysis',
+    totalWines:'Total', tastingRecords:'Tastings', avgRating:'Avg rating', repurchaseRate:'Repurchase',
+    prefProfile:'Preference Profile', prefCountry:'Top Country', prefGrape:'Top Grape', prefType:'Top Type',
+    tastingProfile:'Tasting Profile', tastingAvg:n=>`Average of ${n} tastings`,
+    countryRating:'Cumulative Rating by Country', avgPrice:'Average Price', avgPriceSub:n=>`Based on ${n} wines`,
+    emptyTaste1:'Add tasting records', emptyTaste2:'to start your taste analysis',
+    sommelierTitle:'Ask the Sommelier AI', sommelierSub:'GPT-4o mini · personalized to your taste',
+    startChat:'Start chat →',
+    aiReportTitle:'AI Taste Report', aiReportSub:'Let AI analyze your wine taste',
+    aiReportBtn:'✨ Generate AI Report', aiReportGenerating:'Analyzing your taste...',
+    aiReportNeedData:'Add at least 3 tasting records to generate a report',
+    aiReportErr:'❌ Could not generate report\nPlease try again', aiReportReuse:'View report again',
+    // detail
+    edit:'Edit', delete:'Delete', basicInfo:'Basic Info', tastingTab:'Tasting',
+    country:'Country', region:'Region', grape:'Grape', vintage:'Vintage', alcohol:'ABV',
+    price:'Price', place:'Store', purchaseDate:'Purchase Date', quantity:'Qty',
+    memo:'Memo', foodPairing:'Food Pairing', noTasting1:'No tasting record yet.', noTasting2:'Add one with the Edit button.',
+    // form
+    addWine:'Add Wine', editWine:'Edit Wine', save:'Save', saving:'Saving...',
+    tabWine:'Wine Info', tabStorage:'Storage', tabTasting:'Tasting',
+    photo:'Photo', camera:'Camera', gallery:'Gallery',
+    wineType:'Wine Type', wineName:'Wine Name', producer:'Producer',
+    select:'Select', directInput:'Type here',
+    errName:'Please enter a wine name', errVintage:'Between 1900–2030', errAlcohol:'Between 0–100',
+    status:'Status', addTasting:'Add Tasting Record', addTastingSub:'Add a record if you drank it',
+    drankDate:'Date Tasted', overallRating:'Overall Rating', whatWine:'How was it?',
+    detailScores:'Detailed Scores (optional)', repurchase:'Repurchase?',
+    repurchaseYes:'Yes 👍', repurchaseNo:'No 👎', repurchaseMaybe:'Maybe 🤔',
+    next:'Next', prev:'Back', saveWine:'🍷 Save Wine',
+    memoPlaceholder:'Taste, aroma, food paired...', foodPlaceholder:'e.g. Steak, Cheese',
+    // toasts
+    saved:'✅ Saved!', savedImg:'✅ Saved!\nUploading photo...', imgDone:'🖼 Photo uploaded!',
+    deleted:'🗑️ Deleted', loginRequired:'❌ Login required',
+    confirmDelTitle:'Delete this wine?', confirmDelMsg:'Deleted wines cannot be recovered.', confirmDelOk:'Delete',
+    confirmLogoutTitle:'Log out?', confirmLogoutOk:'Log out',
+    saveTimeout:'⏱ Save timed out\nPlease check your network',
+    // AI
+    aiAnalyzing:'Analyzing label...', aiRecognize:'✨ Recognize Wine Label with AI',
+    aiNeedPhoto:'Please attach a photo first', aiServiceErr:'❌ AI service error\nPlease try again later',
+    aiRateLimit:'⚠️ Rate limit exceeded\nPlease try later', aiApiErr:n=>`❌ API error (${n})\nPlease try again`,
+    aiReadFail:'⚠️ Could not read the label\nTry a clearer photo', aiNotWine:'🍷 This doesn\'t look like a wine label\nPlease attach a wine bottle/label photo',
+    aiNoInfo:'⚠️ No info found\nPlease enter manually', aiDone:f=>`✅ AI recognition complete!\n${f}\nPlease review the rest`,
+    aiNetErr:'📡 Network error\nCheck your connection', aiErr:'❌ An error occurred\nPlease try again',
+    chatTitle:'🍷 Sommelier AI', chatSub:'Wine advisor powered by GPT-4o mini', chatReset:'Reset',
+    chatGreeting:'Hello! I\'m your wine sommelier AI 🍷\nAsk me anything — recommendations, pairings, taste analysis!',
+    chatResetDone:'Conversation reset 🍷\nAsk a new question!',
+    chatPlaceholder:'Ask me anything...',
+    chatTimeout:'⏱ Response timed out. Please try again', chatErr:m=>`❌ Error: ${m}`,
+    preset1:'Wine for today 🍷', preset2:'Gift idea 🎁', preset3:'Steak pairing 🥩', preset4:'My taste ✨', preset5:'Beginner wine 🌱',
+    presetMsg1:'Recommend a good wine to drink today', presetMsg2:'Recommend a gift wine around $40', presetMsg3:'What wine pairs with steak?', presetMsg4:'Tell me a new wine matching my taste', presetMsg5:'What\'s a good beginner wine?',
+  },
+  ko:{
+    appName:'Wine Cellar Note', connecting:'연결 중...',
+    loginTagline1:'내가 마신 와인을 기억하고', loginTagline2:'다음 선택을 더 잘하세요',
+    loginGoogle:'Google로 계속하기', loginTerms:'로그인 시 이용약관 및 개인정보처리방침에 동의합니다',
+    navHome:'홈', navCellar:'창고', navTaste:'취향',
+    myCellar:'내 와인 창고', myCellarSub:'나의 와인 창고',
+    stored:'보관 중', consumed:'마신 와인', wishlist:'관심 와인',
+    thisMonth:'이번 달', drankCount:n=>`와인 ${n}병을 마셨어요`,
+    recentRecords:'최근 기록', viewAll:'전체 보기 →',
+    emptyHome1:'아직 와인 기록이 없어요', emptyHome2:'창고 탭에서 첫 와인을 추가해보세요!',
+    searchPlaceholder:'이름, 품종, 국가 검색...', sortLabel:'정렬',
+    sortNewest:'최신순', sortRating:'별점순', sortPriceHi:'가격↑', sortPriceLo:'가격↓',
+    filterAll:'전체', noResults:'결과가 없습니다',
+    bottles:n=>`${n}병`, bottleUnit:'병', countUnit:n=>`${n}개`,
+    settings:'설정', account:'계정', logout:'로그아웃',
+    aiFeatureTitle:'✨ AI 기능', aiFeatureDesc:'• 와인 라벨 자동 인식\n• 소믈리에 AI 추천 대화\n위 기능이 앱에 포함되어 있습니다.',
+    privacyPolicy:'개인정보처리방침', about:'정보',
+    tasteAnalysis:'취향 분석',
+    totalWines:'총 와인', tastingRecords:'시음 기록', avgRating:'평균 별점', repurchaseRate:'재구매율',
+    prefProfile:'선호 프로파일', prefCountry:'선호 국가', prefGrape:'선호 품종', prefType:'선호 타입',
+    tastingProfile:'테이스팅 프로파일', tastingAvg:n=>`시음 기록 ${n}개 평균`,
+    countryRating:'국가별 누적 별점', avgPrice:'평균 구매가', avgPriceSub:n=>`${n}개 와인 기준`,
+    emptyTaste1:'시음 기록을 추가하면', emptyTaste2:'취향 분석이 시작됩니다',
+    sommelierTitle:'소믈리에 AI에게 물어보기', sommelierSub:'GPT-4o mini · 내 취향 데이터 반영',
+    startChat:'대화 시작하기 →',
+    aiReportTitle:'AI 취향 리포트', aiReportSub:'AI가 내 와인 취향을 분석해드려요',
+    aiReportBtn:'✨ AI 리포트 생성', aiReportGenerating:'취향 분석 중...',
+    aiReportNeedData:'시음 기록 3개 이상이면 리포트를 만들 수 있어요',
+    aiReportErr:'❌ 리포트를 생성하지 못했습니다\n다시 시도해주세요', aiReportReuse:'리포트 다시 보기',
+    edit:'수정', delete:'삭제', basicInfo:'기본 정보', tastingTab:'시음 기록',
+    country:'국가', region:'지역', grape:'품종', vintage:'빈티지', alcohol:'도수',
+    price:'구매가', place:'구매처', purchaseDate:'구매일', quantity:'수량',
+    memo:'메모', foodPairing:'음식 페어링', noTasting1:'아직 시음 기록이 없습니다.', noTasting2:'수정 버튼으로 기록을 추가하세요.',
+    addWine:'새 와인 추가', editWine:'와인 수정', save:'저장', saving:'저장 중...',
+    tabWine:'와인 정보', tabStorage:'보관 정보', tabTasting:'시음 기록',
+    photo:'사진', camera:'카메라', gallery:'갤러리',
+    wineType:'와인 타입', wineName:'와인 이름', producer:'생산자',
+    select:'선택', directInput:'직접 입력',
+    errName:'와인 이름을 입력해주세요', errVintage:'1900~2030 사이', errAlcohol:'0~100 사이',
+    status:'상태', addTasting:'시음 기록 추가', addTastingSub:'마셨다면 기록을 추가해보세요',
+    drankDate:'마신 날짜', overallRating:'전체 별점', whatWine:'어떤 와인이었나요?',
+    detailScores:'세부 점수 (선택)', repurchase:'재구매 의사',
+    repurchaseYes:'또 살게요 👍', repurchaseNo:'아니요 👎', repurchaseMaybe:'글쎄요 🤔',
+    next:'다음', prev:'이전', saveWine:'🍷 와인 저장하기',
+    memoPlaceholder:'맛, 향, 함께 먹은 음식...', foodPlaceholder:'예: 스테이크, 치즈',
+    saved:'✅ 저장됐습니다!', savedImg:'✅ 저장됐습니다!\n사진 업로드 중...', imgDone:'🖼 사진 업로드 완료!',
+    deleted:'🗑️ 삭제됐습니다', loginRequired:'❌ 로그인이 필요합니다',
+    confirmDelTitle:'이 와인을 삭제할까요?', confirmDelMsg:'삭제한 와인은 복구할 수 없습니다.', confirmDelOk:'삭제',
+    confirmLogoutTitle:'로그아웃 할까요?', confirmLogoutOk:'로그아웃',
+    saveTimeout:'⏱ 저장 시간이 초과됐습니다\n네트워크를 확인해주세요',
+    aiAnalyzing:'라벨 분석 중...', aiRecognize:'✨ AI로 와인 라벨 인식',
+    aiNeedPhoto:'먼저 사진을 첨부해주세요', aiServiceErr:'❌ AI 서비스 오류\n잠시 후 다시 시도해주세요',
+    aiRateLimit:'⚠️ API 요청 한도 초과\n잠시 후 다시 시도해주세요', aiApiErr:n=>`❌ API 오류 (${n})\n다시 시도해주세요`,
+    aiReadFail:'⚠️ 라벨을 읽지 못했습니다\n선명한 사진으로 다시 시도해주세요', aiNotWine:'🍷 와인 라벨이 아닌 것 같아요\n와인 병/라벨 사진을 첨부해주세요',
+    aiNoInfo:'⚠️ 정보를 찾지 못했습니다\n직접 입력해주세요', aiDone:f=>`✅ AI 인식 완료!\n${f}\n나머지는 직접 수정해주세요`,
+    aiNetErr:'📡 네트워크 오류\n인터넷 연결을 확인해주세요', aiErr:'❌ 오류가 발생했습니다\n다시 시도해주세요',
+    chatTitle:'🍷 소믈리에 AI', chatSub:'GPT-4o mini 기반 와인 어드바이저', chatReset:'대화 초기화',
+    chatGreeting:'안녕하세요! 와인 소믈리에 AI입니다 🍷\n어떤 와인이 궁금하신가요? 추천, 페어링, 취향 분석 등 무엇이든 물어보세요!',
+    chatResetDone:'대화가 초기화됐습니다 🍷\n새로운 질문을 입력해주세요!',
+    chatPlaceholder:'무엇이든 물어보세요...',
+    chatTimeout:'⏱ 응답 시간 초과. 다시 시도해주세요', chatErr:m=>`❌ 오류: ${m}`,
+    preset1:'오늘 마실 와인 🍷', preset2:'선물용 추천 🎁', preset3:'스테이크 페어링 🥩', preset4:'내 취향 추천 ✨', preset5:'입문 와인 🌱',
+    presetMsg1:'오늘 마시기 좋은 와인 추천해줘', presetMsg2:'선물용 와인 추천해줘. 5만원대로', presetMsg3:'스테이크에 어울리는 와인은?', presetMsg4:'내 취향에 맞는 새로운 와인 알려줘', presetMsg5:'초보자에게 좋은 입문용 와인은?',
+  }
+};
+// 번역 헬퍼: t('key') 또는 t('key', 인자)
+function t(key, arg){
+  const v = (I18N[LANG] && I18N[LANG][key]) ?? (I18N.en[key]) ?? key;
+  return typeof v === 'function' ? v(arg) : v;
+}
+
+// ══════════════════════════════
+// DATA — 저장값(v)은 영어 코드, 라벨만 언어별
+// ══════════════════════════════
+const _LB = LANG; // 라벨 선택용
 const WINE_TYPES=[
-  {v:'red',l:'레드',e:'🍷',c:'#C0392B'},
-  {v:'white',l:'화이트',e:'🥂',c:'#D4A847'},
-  {v:'sparkling',l:'스파클링',e:'🍾',c:'#5B9BD5'},
-  {v:'rose',l:'로제',e:'🌸',c:'#E87BA0'},
-  {v:'dessert',l:'디저트',e:'🍯',c:'#B5722A'},
-  {v:'fortified',l:'강화',e:'🫙',c:'#7B6B9E'},
+  {v:'red',        l:_LB==='ko'?'레드':'Red',          e:'🍷',c:'#C0392B'},
+  {v:'white',      l:_LB==='ko'?'화이트':'White',       e:'🥂',c:'#D4A847'},
+  {v:'sparkling',  l:_LB==='ko'?'스파클링':'Sparkling',  e:'🍾',c:'#5B9BD5'},
+  {v:'rose',       l:_LB==='ko'?'로제':'Rosé',          e:'🌸',c:'#E87BA0'},
+  {v:'dessert',    l:_LB==='ko'?'디저트':'Dessert',      e:'🍯',c:'#B5722A'},
+  {v:'fortified',  l:_LB==='ko'?'강화':'Fortified',      e:'🫙',c:'#7B6B9E'},
 ];
 const STATUSES=[
-  {v:'stored',l:'보관 중',c:'#2EAD6B'},
-  {v:'consumed',l:'마심',c:'#8C9BAB'},
-  {v:'gifted',l:'선물함',c:'#8B5CF6'},
-  {v:'wishlist',l:'관심',c:'#3B82F6'},
-  {v:'reorder',l:'재구매 예정',c:'#E07B2A'},
+  {v:'stored',   l:_LB==='ko'?'보관 중':'Stored',     c:'#2EAD6B'},
+  {v:'consumed', l:_LB==='ko'?'마심':'Tasted',        c:'#8C9BAB'},
+  {v:'gifted',   l:_LB==='ko'?'선물함':'Gifted',      c:'#8B5CF6'},
+  {v:'wishlist', l:_LB==='ko'?'관심':'Wishlist',      c:'#3B82F6'},
+  {v:'reorder',  l:_LB==='ko'?'재구매 예정':'Reorder', c:'#E07B2A'},
 ];
-const COUNTRIES=['프랑스','이탈리아','스페인','포르투갈','미국','칠레','아르헨티나','호주','뉴질랜드','독일','오스트리아','한국','기타'];
-const GRAPES=['까베르네 소비뇽','메를로','피노 누아','시라/쉬라즈','산지오베제','네비올로','템프라니요','말벡','그르나슈','샤르도네','소비뇽 블랑','리슬링','피노 그리지오','기타'];
-const REGIONS={프랑스:['보르도','부르고뉴','샹파뉴','론','루아르','알자스','프로방스'],이탈리아:['토스카나','피에몬테','베네토','시칠리아','풀리아'],스페인:['리오하','리베라 델 두에로','프리오라트','루에다'],미국:['나파 밸리','소노마','오리건','워싱턴'],칠레:['마이포','콜차과','카사블랑카'],호주:['바로사 밸리','클레어 밸리','야라 밸리']};
-const PLACES=['이마트','홈플러스','롯데마트','코스트코','와인앤모어','보틀벙커','세계주류','GS25','CU','갤러리아','현대백화점','해외 면세점','선물 받음','기타'];
-const TAGS=['가볍다','묵직하다','달다','드라이하다','부드럽다','떫다','향이 좋다','향이 별로','산미가 있다','음식과 잘 맞았다','다시 사고 싶다','선물용으로 좋겠다'];
+// 국가: 저장값은 영어, 표시는 언어별
+const COUNTRIES = _LB==='ko'
+  ? ['프랑스','이탈리아','스페인','포르투갈','미국','칠레','아르헨티나','호주','뉴질랜드','독일','오스트리아','한국','기타']
+  : ['France','Italy','Spain','Portugal','USA','Chile','Argentina','Australia','New Zealand','Germany','Austria','South Korea','Other'];
+const GRAPES = _LB==='ko'
+  ? ['까베르네 소비뇽','메를로','피노 누아','시라/쉬라즈','산지오베제','네비올로','템프라니요','말벡','그르나슈','샤르도네','소비뇽 블랑','리슬링','피노 그리지오','기타']
+  : ['Cabernet Sauvignon','Merlot','Pinot Noir','Syrah/Shiraz','Sangiovese','Nebbiolo','Tempranillo','Malbec','Grenache','Chardonnay','Sauvignon Blanc','Riesling','Pinot Grigio','Other'];
+// 지역: 국가명(언어별)을 키로 사용
+const REGIONS = _LB==='ko'
+  ? {프랑스:['보르도','부르고뉴','샹파뉴','론','루아르','알자스','프로방스'],이탈리아:['토스카나','피에몬테','베네토','시칠리아','풀리아'],스페인:['리오하','리베라 델 두에로','프리오라트','루에다'],미국:['나파 밸리','소노마','오리건','워싱턴'],칠레:['마이포','콜차과','카사블랑카'],호주:['바로사 밸리','클레어 밸리','야라 밸리']}
+  : {France:['Bordeaux','Burgundy','Champagne','Rhône','Loire','Alsace','Provence'],Italy:['Tuscany','Piedmont','Veneto','Sicily','Puglia'],Spain:['Rioja','Ribera del Duero','Priorat','Rueda'],USA:['Napa Valley','Sonoma','Oregon','Washington'],Chile:['Maipo','Colchagua','Casablanca'],Australia:['Barossa Valley','Clare Valley','Yarra Valley']};
+// 구매처: 범용 카테고리 (저장값 영어 코드 + 라벨)
+const PLACES = _LB==='ko'
+  ? ['대형마트','와인 전문점','온라인','면세점','레스토랑/바','와이너리','선물 받음','기타']
+  : ['Supermarket','Wine Shop','Online','Duty-free','Restaurant/Bar','Winery','Gift','Other'];
+const TAGS = _LB==='ko'
+  ? ['가볍다','묵직하다','달다','드라이하다','부드럽다','떫다','향이 좋다','향이 별로','산미가 있다','음식과 잘 맞았다','다시 사고 싶다','선물용으로 좋겠다']
+  : ['Light','Full-bodied','Sweet','Dry','Smooth','Tannic','Great aroma','Weak aroma','Acidic','Paired well','Would buy again','Good for gifting'];
 const TK=['aroma','body','acidity','tannin','sweetness','finish'];
-const TL=['향','바디','산미','탄닌','당도','여운'];
+const TL = _LB==='ko'
+  ? ['향','바디','산미','탄닌','당도','여운']
+  : ['Aroma','Body','Acidity','Tannin','Sweetness','Finish'];
 
 
 // ══════════════════════════════
@@ -547,7 +729,11 @@ const SCORE_DESCS={
 // ══════════════════════════════
 // UTILS
 // ══════════════════════════════
-const fp=p=>p!=null?p.toLocaleString('ko-KR')+'원':'-';
+const fp=p=>{
+  if(p==null)return '-';
+  if(CURRENCY.code==='KRW')return p.toLocaleString('ko-KR')+'원';
+  return CURRENCY.symbol+p.toLocaleString(CURRENCY.locale);
+};
 const tc=t=>(WINE_TYPES.find(x=>x.v===t)||{c:'#8C9BAB'}).c;
 const wtInfo=t=>WINE_TYPES.find(x=>x.v===t)||{l:t,e:'',c:'#8C9BAB'};
 const stInfo=s=>STATUSES.find(x=>x.v===s)||{l:s,c:'#8C9BAB'};
@@ -655,11 +841,11 @@ function renderHome(){
   const recent=wines.slice(0,3);
   return `<div class="scroll" style="padding:20px 16px 16px;background:var(--bg)">
     <div style="margin-bottom:22px">
-      <p class="xs mut" style="margin-bottom:4px">나의 와인 창고</p>
-      <h2 class="dark bold" style="font-size:24px;letter-spacing:-.4px">내 와인 창고</h2>
+      <p class="xs mut" style="margin-bottom:4px">${t('myCellarSub')}</p>
+      <h2 class="dark bold" style="font-size:24px;letter-spacing:-.4px">${t('myCellar')}</h2>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px">
-      ${[['보관 중',stored,'#2EAD6B'],['마신 와인',consumed,'#8C9BAB'],['관심 와인',wishlist,'#3B82F6']].map(([l,v,c])=>`
+      ${[[t('stored'),stored,'#2EAD6B'],[t('consumed'),consumed,'#8C9BAB'],[t('wishlist'),wishlist,'#3B82F6']].map(([l,v,c])=>`
         <div class="stat-card">
           <div style="font-size:26px;font-weight:700;color:${c};margin-bottom:4px">${v}</div>
           <div class="xxs mut">${l}</div>
@@ -667,13 +853,13 @@ function renderHome(){
     </div>
     ${thisMonth>0?`<div style="background:var(--red-lt);border:1px solid #F0B8B2;border-radius:12px;padding:13px 15px;margin-bottom:18px;display:flex;align-items:center;gap:10px">
       <span style="font-size:20px">🗓</span>
-      <div><div class="xxs" style="color:var(--red-mid);margin-bottom:2px">이번 달</div><div class="sm red semi">와인 ${thisMonth}병을 마셨어요</div></div>
+      <div><div class="xxs" style="color:var(--red-mid);margin-bottom:2px">${t('thisMonth')}</div><div class="sm red semi">${t('drankCount',thisMonth)}</div></div>
     </div>`:''}
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <h3 class="dark semi" style="font-size:15px">최근 기록</h3>
-      <button class="xs red semi" onclick="navTo('wines')">전체 보기 →</button>
+      <h3 class="dark semi" style="font-size:15px">${t('recentRecords')}</h3>
+      <button class="xs red semi" onclick="navTo('wines')">${t('viewAll')}</button>
     </div>
-    ${recent.length?recent.map(wineCardHTML).join(''):`<div style="text-align:center;padding:44px 0;line-height:2.2"><div style="font-size:40px;margin-bottom:10px">🍷</div><div class="sm mut">아직 와인 기록이 없어요<br>창고 탭에서 첫 와인을 추가해보세요!</div></div>`}
+    ${recent.length?recent.map(wineCardHTML).join(''):`<div style="text-align:center;padding:44px 0;line-height:2.2"><div style="font-size:40px;margin-bottom:10px">🍷</div><div class="sm mut">${t('emptyHome1')}<br>${t('emptyHome2')}</div></div>`}
   </div>`;
 }
 
@@ -683,20 +869,20 @@ function renderWineList(){
   if(filterSort==='rating')list.sort((a,b)=>(b.rating||0)-(a.rating||0));
   else if(filterSort==='price_hi')list.sort((a,b)=>(b.purchase_price||0)-(a.purchase_price||0));
   else if(filterSort==='price_lo')list.sort((a,b)=>(a.purchase_price||0)-(b.purchase_price||0));
-  const fBtns=[{v:'all',l:'전체',c:'#C0392B'},...STATUSES].map(s=>`<button onclick="setFilter('${s.v}')" style="flex-shrink:0;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:500;border:1.5px solid ${filterStatus===s.v?s.c:'var(--bdr)'};background:${filterStatus===s.v?s.c+'14':'transparent'};color:${filterStatus===s.v?s.c:'var(--mut)'};white-space:nowrap;transition:all .15s">${h(s.l)}</button>`).join('');
-  const sBtns=[['created','최신순'],['rating','별점순'],['price_hi','가격↑'],['price_lo','가격↓']].map(([v,l])=>`<button onclick="setSort('${v}')" style="padding:4px 9px;border-radius:7px;font-size:11px;font-weight:500;border:1px solid ${filterSort===v?'var(--red)':'var(--bdr)'};background:${filterSort===v?'var(--red-lt)':'transparent'};color:${filterSort===v?'var(--red)':'var(--mut)'}">${l}</button>`).join('');
+  const fBtns=[{v:'all',l:t('filterAll'),c:'#C0392B'},...STATUSES].map(s=>`<button onclick="setFilter('${s.v}')" style="flex-shrink:0;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:500;border:1.5px solid ${filterStatus===s.v?s.c:'var(--bdr)'};background:${filterStatus===s.v?s.c+'14':'transparent'};color:${filterStatus===s.v?s.c:'var(--mut)'};white-space:nowrap;transition:all .15s">${h(s.l)}</button>`).join('');
+  const sBtns=[['created',t('sortNewest')],['rating',t('sortRating')],['price_hi',t('sortPriceHi')],['price_lo',t('sortPriceLo')]].map(([v,l])=>`<button onclick="setSort('${v}')" style="padding:4px 9px;border-radius:7px;font-size:11px;font-weight:500;border:1px solid ${filterSort===v?'var(--red)':'var(--bdr)'};background:${filterSort===v?'var(--red-lt)':'transparent'};color:${filterSort===v?'var(--red)':'var(--mut)'}">${l}</button>`).join('');
   return `<div style="padding:12px 14px 8px;flex-shrink:0;background:var(--bg2);border-bottom:1px solid var(--bdr)">
     <div style="position:relative;margin-bottom:10px">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B5A49C" stroke-width="2" stroke-linecap="round" style="position:absolute;left:12px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" placeholder="이름, 품종, 국가 검색..." value="${esc(searchQ)}" oninput="doSearch(this.value)" style="padding-left:36px;background:var(--surf);border-color:var(--bdr)">
+      <input type="text" placeholder="${t('searchPlaceholder')}" value="${esc(searchQ)}" oninput="doSearch(this.value)" style="padding-left:36px;background:var(--surf);border-color:var(--bdr)">
     </div>
     <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex-wrap:nowrap">${fBtns}</div>
   </div>
   <div style="display:flex;gap:6px;padding:8px 14px;flex-shrink:0;background:var(--bg2);border-bottom:1px solid var(--bdr);align-items:center">
-    <span class="xxs mut" style="margin-right:2px">정렬</span>${sBtns}
+    <span class="xxs mut" style="margin-right:2px">${t('sortLabel')}</span>${sBtns}
   </div>
   <div class="scroll" style="padding:14px 14px 80px">
-    ${list.length?list.map(wineCardHTML).join(''):`<div style="text-align:center;padding:50px 0;line-height:2.2"><div style="font-size:36px">🍷</div><div class="sm mut">결과가 없습니다</div></div>`}
+    ${list.length?list.map(wineCardHTML).join(''):`<div style="text-align:center;padding:50px 0;line-height:2.2"><div style="font-size:36px">🍷</div><div class="sm mut">${t('noResults')}</div></div>`}
   </div>
   <button class="fab" onclick="openNew()">+</button>`;
 }
@@ -716,45 +902,59 @@ function renderProfile(){
   const topT=Object.entries(wTypes).sort((a,b)=>b[1]-a[1])[0]?.[0];
   const radarData=TK.map((k,i)=>{const v=tasted.filter(w=>w[k]>0);return{subject:TL[i],value:v.length?+(v.reduce((s,w)=>s+(w[k]||0),0)/v.length).toFixed(1):0};});
   const ctBar=Object.entries(countries).map(([n,v])=>({name:n,score:+v.toFixed(1)})).sort((a,b)=>b.score-a.score).slice(0,5);
-  const stats=[['총 와인',wines.length+'개'],['시음 기록',tasted.length+'개'],['평균 별점',avgR?'★ '+avgR:'-'],['재구매율',repRate!=null?repRate+'%':'-']];
-  const prefs=[[topC,'선호 국가','🌍'],[topG,'선호 품종','🍇'],[topT?wtInfo(topT).l:null,'선호 타입','🍷']].filter(([v])=>v);
+  const stats=[[t('totalWines'),t('countUnit',wines.length)],[t('tastingRecords'),t('countUnit',tasted.length)],[t('avgRating'),avgR?'★ '+avgR:'-'],[t('repurchaseRate'),repRate!=null?repRate+'%':'-']];
+  const prefs=[[topC,t('prefCountry'),'🌍'],[topG,t('prefGrape'),'🍇'],[topT?wtInfo(topT).l:null,t('prefType'),'🍷']].filter(([v])=>v);
   return `<div class="scroll" style="padding:20px 16px 16px;background:var(--bg)">
-    <h2 class="dark bold" style="font-size:22px;letter-spacing:-.4px;margin-bottom:18px">취향 분석</h2>
+    <h2 class="dark bold" style="font-size:22px;letter-spacing:-.4px;margin-bottom:18px">${t('tasteAnalysis')}</h2>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px">
       ${stats.map(([l,v])=>`<div class="card-flat"><p class="xxs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">${l}</p><p style="font-size:22px;font-weight:700;color:var(--red);letter-spacing:-.5px">${v}</p></div>`).join('')}
     </div>
     ${prefs.length?`<div class="card-flat" style="margin-bottom:12px">
-      <p class="xs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">선호 프로파일</p>
+      <p class="xs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">${t('prefProfile')}</p>
       ${prefs.map(([v,l,e])=>`<div class="inf"><span class="sm mut">${e} ${l}</span><span class="sm dark bold">${h(v)}</span></div>`).join('')}
     </div>`:''}
     ${tasted.length?`
     <div class="card-flat" style="margin-bottom:12px">
-      <p class="xs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">테이스팅 프로파일</p>
-      <p class="xxs light" style="margin-bottom:12px">시음 기록 ${tasted.length}개 평균</p>
+      <p class="xs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">${t('tastingProfile')}</p>
+      <p class="xxs light" style="margin-bottom:12px">${t('tastingAvg',tasted.length)}</p>
       <div style="display:flex;justify-content:center">${radarChartSVG(radarData,210)}</div>
     </div>
     ${ctBar.length>1?`<div class="card-flat" style="margin-bottom:12px">
-      <p class="xs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px">국가별 누적 별점</p>
+      <p class="xs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px">${t('countryRating')}</p>
       ${barChartSVG(ctBar,340,130)}
     </div>`:''}
     ${avgP?`<div class="card-flat">
-      <p class="xxs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">평균 구매가</p>
+      <p class="xxs mut" style="text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">${t('avgPrice')}</p>
       <p style="font-size:22px;font-weight:700;color:var(--red)">${fp(avgP)}</p>
-      <p class="xxs light" style="margin-top:3px">${priced.length}개 와인 기준</p>
+      <p class="xxs light" style="margin-top:3px">${t('avgPriceSub',priced.length)}</p>
     </div>`:''}`
-    :`<div style="text-align:center;padding:44px 0;line-height:2.2"><div style="font-size:40px;margin-bottom:10px">📊</div><div class="sm mut">시음 기록을 추가하면<br>취향 분석이 시작됩니다</div></div>`}
+    :`<div style="text-align:center;padding:44px 0;line-height:2.2"><div style="font-size:40px;margin-bottom:10px">📊</div><div class="sm mut">${t('emptyTaste1')}<br>${t('emptyTaste2')}</div></div>`}
+    ${tasted.length>=3?`<!-- AI 취향 리포트 섹션 -->
+    <div style="margin-top:16px;background:#fff;border:1px solid var(--bdr);border-radius:16px;padding:18px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:26px">📋</span>
+        <div>
+          <p style="font-size:15px;font-weight:700;color:var(--dark);margin-bottom:2px">${t('aiReportTitle')}</p>
+          <p style="font-size:11px;color:var(--mut)">${t('aiReportSub')}</p>
+        </div>
+      </div>
+      <div id="ai-report-content"></div>
+      <button id="ai-report-btn" onclick="generateTasteReport()" style="width:100%;padding:12px;background:linear-gradient(135deg,#C0392B,#E74C3C);border-radius:10px;border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer">
+        ${t('aiReportBtn')}
+      </button>
+    </div>`:''}
     <!-- 소믈리에 AI 섹션 -->
     <div style="margin-top:16px;background:linear-gradient(135deg,#8B0000,#C0392B);border-radius:16px;padding:18px;color:#fff;margin-bottom:8px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
         <span style="font-size:28px">🍷</span>
         <div>
-          <p style="font-size:15px;font-weight:700;margin-bottom:2px">소믈리에 AI에게 물어보기</p>
-          <p style="font-size:11px;opacity:.8">GPT-4o mini · 내 취향 데이터 반영</p>
+          <p style="font-size:15px;font-weight:700;margin-bottom:2px">${t('sommelierTitle')}</p>
+          <p style="font-size:11px;opacity:.8">${t('sommelierSub')}</p>
         </div>
       </div>
 
       <button onclick="openChat()" style="width:100%;padding:12px;background:#fff;border-radius:10px;border:none;color:#C0392B;font-size:14px;font-weight:700;cursor:pointer">
-        대화 시작하기 →
+        ${t('startChat')}
       </button>
     </div>
   </div>`;
@@ -767,13 +967,13 @@ function renderDetail(w){
   const wt=wtInfo(w.wine_type);
   const radarData=TK.map((k,i)=>({subject:TL[i],value:w[k]||0}));
   const hasDetail=TK.some(k=>w[k]>0);
-  const infoRows=[['국가',w.country],['지역',w.region],['품종',w.grape],['빈티지',w.vintage?w.vintage+'년':null],['도수',w.alcohol?w.alcohol+'%':null],['구매가',w.purchase_price!=null?fp(w.purchase_price):null],['구매처',w.purchase_place],['구매일',fmtDate(w.purchase_date)],['수량',w.quantity!=null?w.quantity+'병':null]].filter(([,v])=>v&&v!=='-');
+  const infoRows=[[t('country'),w.country],[t('region'),w.region],[t('grape'),w.grape],[t('vintage'),w.vintage?(LANG==='ko'?w.vintage+'년':w.vintage):null],[t('alcohol'),w.alcohol?w.alcohol+'%':null],[t('price'),w.purchase_price!=null?fp(w.purchase_price):null],[t('place'),w.purchase_place],[t('purchaseDate'),fmtDate(w.purchase_date)],[t('quantity'),w.quantity!=null?t('bottles',w.quantity):null]].filter(([,v])=>v&&v!=='-');
   return `<div class="screen col" id="detail-screen" style="background:var(--bg)">
     <div class="topbar">
       <button style="font-size:20px;color:var(--red);padding:0 4px;line-height:1" onclick="closeDetail()">←</button>
       <span class="dark bold" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;letter-spacing:-.2px">${h(w.name)}</span>
-      <button class="xs red semi" style="margin-right:8px" onclick="openEdit('${w.id}')">수정</button>
-      <button class="xs" style="color:var(--danger)" onclick="deleteWine('${w.id}')">삭제</button>
+      <button class="xs red semi" style="margin-right:8px" onclick="openEdit('${w.id}')">${t('edit')}</button>
+      <button class="xs" style="color:var(--danger)" onclick="deleteWine('${w.id}')">${t('delete')}</button>
     </div>
     <div style="display:flex;gap:14px;align-items:flex-start;padding:16px;border-bottom:1px solid var(--bdr);background:var(--bg2);flex-shrink:0">
       ${w.user_image_url?`<img src="${w.user_image_url}" style="width:72px;height:94px;object-fit:cover;border-radius:12px;flex-shrink:0" alt="와인">`:bottleSVG(w.wine_type,60)}
@@ -788,8 +988,8 @@ function renderDetail(w){
       </div>
     </div>
     <div class="tabs" id="detail-tabs">
-      <button class="tab-btn active" onclick="switchDetailTab(0)">기본 정보</button>
-      <button class="tab-btn" onclick="switchDetailTab(1)">시음 기록</button>
+      <button class="tab-btn active" onclick="switchDetailTab(0)">${t('basicInfo')}</button>
+      <button class="tab-btn" onclick="switchDetailTab(1)">${t('tastingTab')}</button>
     </div>
     <div class="scroll" id="detail-body" style="background:var(--bg)">
       <div id="detail-tab0" style="padding:16px">
@@ -812,10 +1012,10 @@ function renderDetail(w){
               <span class="xs red bold" style="width:14px;text-align:right">${w[k]}</span>
             </div>`:'').join('')}
           `:''}
-          ${w.memo?`<div class="card-flat" style="margin-top:14px"><p class="xxs mut" style="margin-bottom:5px">📝 메모</p><p class="sm dark" style="line-height:1.7">${h(w.memo)}</p></div>`:''}
-          ${w.food_pairing?`<div class="card-flat" style="margin-top:10px"><p class="xxs mut" style="margin-bottom:5px">🍽 음식 페어링</p><p class="sm dark">${h(w.food_pairing)}</p></div>`:''}
+          ${w.memo?`<div class="card-flat" style="margin-top:14px"><p class="xxs mut" style="margin-bottom:5px">📝 ${t('memo')}</p><p class="sm dark" style="line-height:1.7">${h(w.memo)}</p></div>`:''}
+          ${w.food_pairing?`<div class="card-flat" style="margin-top:10px"><p class="xxs mut" style="margin-bottom:5px">🍽 ${t('foodPairing')}</p><p class="sm dark">${h(w.food_pairing)}</p></div>`:''}
           ${w.repurchase!=null?`<div class="card-flat" style="margin-top:10px;display:flex;align-items:center;gap:10px"><span style="font-size:18px">${w.repurchase?'👍':'👎'}</span><p class="sm dark semi">${w.repurchase?'재구매 의사 있음':'재구매 의사 없음'}</p></div>`:''}
-        `:`<div style="text-align:center;padding:50px 0;line-height:2.2"><div style="font-size:32px;margin-bottom:10px">📝</div><div class="sm mut">아직 시음 기록이 없습니다.<br>수정 버튼으로 기록을 추가하세요.</div></div>`}
+        `:`<div style="text-align:center;padding:50px 0;line-height:2.2"><div style="font-size:32px;margin-bottom:10px">📝</div><div class="sm mut">${t('noTasting1')}<br>${t('noTasting2')}</div></div>`}
       </div>
     </div>
   </div>`;
@@ -834,7 +1034,7 @@ function initForm(w){
     wine_type:w.wine_type||'red',
     vintage:w.vintage?String(w.vintage):'',
     alcohol:w.alcohol?String(w.alcohol):'',
-    purchase_price:w.purchase_price!=null?w.purchase_price.toLocaleString('ko-KR'):'',
+    purchase_price:w.purchase_price!=null?w.purchase_price.toLocaleString(CURRENCY.locale):'',
     purchase_place:nn(w.purchase_place), purchase_date:nn(w.purchase_date),
     quantity:String(w.quantity||1),
     has_tasting:w.rating!=null,
@@ -870,7 +1070,7 @@ function renderForm(isEdit){
       </div>
     </div>`;
   }).join('');
-  const repBtns=[{v:'true',l:'또 살게요 👍'},{v:'false',l:'아니요 👎'},{v:'null',l:'글쎄요 🤔'}].map(r=>{
+  const repBtns=[{v:'true',l:t('repurchaseYes')},{v:'false',l:t('repurchaseNo')},{v:'null',l:t('repurchaseMaybe')}].map(r=>{
     const on=(f.repurchase===true&&r.v==='true')||(f.repurchase===false&&r.v==='false')||(f.repurchase===null&&r.v==='null');
     return `<button type="button" data-rep="${r.v}" onclick="formSetRepurchase(${r.v})" class="pill-btn rep-btn${on?' on':''}">${r.l}</button>`;
   }).join('');
@@ -891,81 +1091,81 @@ function renderForm(isEdit){
   return `<div class="screen col" id="form-screen" style="background:var(--bg)">
     <div class="topbar">
       <button style="font-size:20px;color:var(--red);padding:0 4px;line-height:1" onclick="closeForm()">←</button>
-      <span class="dark bold" style="flex:1;font-size:16px;letter-spacing:-.2px">${isEdit?'와인 수정':'새 와인 추가'}</span>
-      <button id="submit-btn" class="btn-red" onclick="submitForm()">저장</button>
+      <span class="dark bold" style="flex:1;font-size:16px;letter-spacing:-.2px">${isEdit?t('editWine'):t('addWine')}</span>
+      <button id="submit-btn" class="btn-red" onclick="submitForm()">${t('save')}</button>
     </div>
 
     <div class="tabs" id="form-tabs">
-      <button class="tab-btn active" onclick="switchFormTab(0)">와인 정보</button>
-      <button class="tab-btn" onclick="switchFormTab(1)">보관 정보</button>
-      <button class="tab-btn" onclick="switchFormTab(2)">시음 기록</button>
+      <button class="tab-btn active" onclick="switchFormTab(0)">${t('tabWine')}</button>
+      <button class="tab-btn" onclick="switchFormTab(1)">${t('tabStorage')}</button>
+      <button class="tab-btn" onclick="switchFormTab(2)">${t('tabTasting')}</button>
     </div>
     <div class="scroll" id="form-body" style="padding:16px">
 
       <!-- ── 탭 0: 와인 정보 ── -->
       <div id="ftab0">
         <div style="margin-bottom:18px">
-          <label style="${LS}">사진</label>
+          <label style="${LS}">${t('photo')}</label>
           <div id="img-preview-container">${formState.user_image_url?`<div style="position:relative"><img src="${formState.user_image_url}" class="img-thumb" alt="와인 사진"><button onclick="removeImage()" style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:14px;background:rgba(0,0,0,.55);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>`:imagePlaceholderHTML()}</div>
         </div>
-        <div style="margin-bottom:18px"><label style="${LS}">와인 타입</label><div style="display:flex;gap:7px;flex-wrap:wrap">${typeBtns}</div></div>
+        <div style="margin-bottom:18px"><label style="${LS}">${t('wineType')}</label><div style="display:flex;gap:7px;flex-wrap:wrap">${typeBtns}</div></div>
         <div style="margin-bottom:16px">
-          <label style="${LS}">와인 이름 *</label>
-          <input id="f-name" type="text" placeholder="예: 샤또 마르고 2019" value="${esc(f.name)}" oninput="formSet('name',this.value)" style="${IS}">
-          <p id="err-name" class="xxs" style="color:var(--danger);margin-top:4px;display:none">와인 이름을 입력해주세요</p>
+          <label style="${LS}">${t('wineName')} *</label>
+          <input id="f-name" type="text" placeholder="${LANG==='ko'?'예: 샤또 마르고 2019':'e.g. Château Margaux 2019'}" value="${esc(f.name)}" oninput="formSet('name',this.value)" style="${IS}">
+          <p id="err-name" class="xxs" style="color:var(--danger);margin-top:4px;display:none">${t('errName')}</p>
         </div>
-        <div style="margin-bottom:16px"><label style="${LS}">생산자</label><input type="text" placeholder="예: Château Margaux" value="${esc(f.producer)}" oninput="formSet('producer',this.value)" style="${IS}"></div>
+        <div style="margin-bottom:16px"><label style="${LS}">${t('producer')}</label><input type="text" placeholder="예: Château Margaux" value="${esc(f.producer)}" oninput="formSet('producer',this.value)" style="${IS}"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-          <div><label style="${LS}">국가</label><select onchange="formSet('country',this.value);formSet('region','');rerenderFormRegion()" style="${IS}"><option value="">선택</option>${COUNTRIES.map(c=>`<option value="${esc(c)}"${f.country===c?' selected':''}>${esc(c)}</option>`).join('')}</select></div>
-          <div id="region-container"><label style="${LS}">지역</label>${REGIONS[f.country]?`<select id="f-region" onchange="formSet('region',this.value)" style="${IS}"><option value="">선택</option>${regionOpts}</select>`:`<input id="f-region" type="text" placeholder="직접 입력" value="${esc(f.region)}" oninput="formSet('region',this.value)" style="${IS}">`}</div>
+          <div><label style="${LS}">${t('country')}</label><select onchange="formSet('country',this.value);formSet('region','');rerenderFormRegion()" style="${IS}"><option value="">${t('select')}</option>${COUNTRIES.map(c=>`<option value="${esc(c)}"${f.country===c?' selected':''}>${esc(c)}</option>`).join('')}</select></div>
+          <div id="region-container"><label style="${LS}">${t('region')}</label>${REGIONS[f.country]?`<select id="f-region" onchange="formSet('region',this.value)" style="${IS}"><option value="">${t('select')}</option>${regionOpts}</select>`:`<input id="f-region" type="text" placeholder="${t('directInput')}" value="${esc(f.region)}" oninput="formSet('region',this.value)" style="${IS}">`}</div>
         </div>
-        <div style="margin-bottom:16px"><label style="${LS}">품종</label><select onchange="formSet('grape',this.value)" style="${IS}"><option value="">선택</option>${GRAPES.map(g=>`<option value="${esc(g)}"${f.grape===g?' selected':''}>${esc(g)}</option>`).join('')}</select></div>
+        <div style="margin-bottom:16px"><label style="${LS}">${t('grape')}</label><select onchange="formSet('grape',this.value)" style="${IS}"><option value="">${t('select')}</option>${GRAPES.map(g=>`<option value="${esc(g)}"${f.grape===g?' selected':''}>${esc(g)}</option>`).join('')}</select></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px">
-          <div><label style="${LS}">빈티지</label><input type="number" value="${esc(f.vintage)}" oninput="formSet('vintage',this.value)" style="${IS}"><p id="err-vintage" class="xxs" style="color:var(--danger);margin-top:3px;display:none">1900~2030 사이</p></div>
-          <div><label style="${LS}">도수 (%)</label><input type="number" step=".1" value="${esc(f.alcohol)}" oninput="formSet('alcohol',this.value)" style="${IS}"><p id="err-alcohol" class="xxs" style="color:var(--danger);margin-top:3px;display:none">0~100 사이</p></div>
+          <div><label style="${LS}">${t('vintage')}</label><input type="number" value="${esc(f.vintage)}" oninput="formSet('vintage',this.value)" style="${IS}"><p id="err-vintage" class="xxs" style="color:var(--danger);margin-top:3px;display:none">${t('errVintage')}</p></div>
+          <div><label style="${LS}">${t('alcohol')} (%)</label><input type="number" step=".1" value="${esc(f.alcohol)}" oninput="formSet('alcohol',this.value)" style="${IS}"><p id="err-alcohol" class="xxs" style="color:var(--danger);margin-top:3px;display:none">${t('errAlcohol')}</p></div>
         </div>
-        ${nextBtn('다음', 1)}
+        ${nextBtn(t('next'), 1)}
       </div>
 
       <!-- ── 탭 1: 보관 정보 ── -->
       <div id="ftab1" class="hidden">
-        <div style="margin-bottom:18px"><label style="${LS}">상태</label><div style="display:flex;gap:7px;flex-wrap:wrap">${stBtns}</div></div>
-        <div style="margin-bottom:16px"><label style="${LS}">구매가 (원)</label><input id="f-price" type="text" inputmode="numeric" value="${esc(f.purchase_price)}" oninput="onPriceInput(this)" style="${IS}"></div>
-        <div style="margin-bottom:16px"><label style="${LS}">구매처</label><select onchange="formSet('purchase_place',this.value)" style="${IS}"><option value="">선택</option>${PLACES.map(p=>`<option value="${esc(p)}"${f.purchase_place===p?' selected':''}>${esc(p)}</option>`).join('')}</select></div>
-        <div style="margin-bottom:16px"><label style="${LS}">구매일</label><input type="date" value="${esc(f.purchase_date)}" onchange="formSet('purchase_date',this.value)" style="${IS}"></div>
-        <div style="margin-bottom:16px"><label style="${LS}">수량</label>
+        <div style="margin-bottom:18px"><label style="${LS}">${t('status')}</label><div style="display:flex;gap:7px;flex-wrap:wrap">${stBtns}</div></div>
+        <div style="margin-bottom:16px"><label style="${LS}">${t('price')} (${CURRENCY.symbol})</label><input id="f-price" type="text" inputmode="numeric" value="${esc(f.purchase_price)}" oninput="onPriceInput(this)" style="${IS}"></div>
+        <div style="margin-bottom:16px"><label style="${LS}">${t('place')}</label><select onchange="formSet('purchase_place',this.value)" style="${IS}"><option value="">${t('select')}</option>${PLACES.map(p=>`<option value="${esc(p)}"${f.purchase_place===p?' selected':''}>${esc(p)}</option>`).join('')}</select></div>
+        <div style="margin-bottom:16px"><label style="${LS}">${t('purchaseDate')}</label><input type="date" value="${esc(f.purchase_date)}" onchange="formSet('purchase_date',this.value)" style="${IS}"></div>
+        <div style="margin-bottom:16px"><label style="${LS}">${t('quantity')}</label>
           <div style="display:flex;align-items:center;gap:16px">
             <button type="button" onclick="changeQty(-1)" style="width:38px;height:38px;border-radius:10px;background:#fff;border:1.5px solid var(--bdr);color:var(--dark);font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer">−</button>
             <span id="qty-display" class="dark bold" style="font-size:22px;min-width:28px;text-align:center">${f.quantity}</span>
             <button type="button" onclick="changeQty(1)" style="width:38px;height:38px;border-radius:10px;background:#fff;border:1.5px solid var(--bdr);color:var(--dark);font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer">+</button>
           </div>
         </div>
-        ${nextBtn('다음', 2)}
-        ${prevBtn('이전', 0)}
+        ${nextBtn(t('next'), 2)}
+        ${prevBtn(t('prev'), 0)}
       </div>
 
       <!-- ── 탭 2: 시음 기록 ── -->
       <div id="ftab2" class="hidden">
         <div class="toggle-wrap" style="margin-bottom:18px">
-          <div><p class="dark semi" style="font-size:14px;margin-bottom:2px">시음 기록 추가</p><p class="xxs mut">마셨다면 기록을 추가해보세요</p></div>
+          <div><p class="dark semi" style="font-size:14px;margin-bottom:2px">${t('addTasting')}</p><p class="xxs mut">${t('addTastingSub')}</p></div>
           <div id="toggle-rail" class="toggle-rail" style="background:${f.has_tasting?'var(--red)':'#D9CFCA'}" onclick="toggleTasting()"><div class="toggle-knob" style="left:${f.has_tasting?'23px':'3px'}"></div></div>
         </div>
         <div id="tasting-fields" ${f.has_tasting?'':' style="display:none"'}>
-          <div style="margin-bottom:15px"><label style="${LS}">마신 날짜</label><input type="date" value="${esc(f.drank_at)}" onchange="formSet('drank_at',this.value)" style="${IS}"></div>
-          <div style="margin-bottom:15px"><label style="${LS}">전체 별점</label><div id="star-display" style="display:flex;gap:4px">${renderStarInput(f.rating)}</div></div>
-          <div style="margin-bottom:15px"><label style="${LS}">어떤 와인이었나요?</label><div style="display:flex;gap:6px;flex-wrap:wrap" id="tag-container">${tagBtns}</div></div>
-          <div style="margin-bottom:15px"><label style="${LS}">세부 점수 (선택)</label>${sliders}</div>
-          <div style="margin-bottom:15px"><label style="${LS}">메모</label><textarea placeholder="맛, 향, 함께 먹은 음식..." rows="3" oninput="formSet('memo',this.value)" style="${IS};resize:vertical">${esc(f.memo)}</textarea></div>
-          <div style="margin-bottom:15px"><label style="${LS}">음식 페어링</label><input type="text" placeholder="예: 스테이크, 치즈" value="${esc(f.food_pairing)}" oninput="formSet('food_pairing',this.value)" style="${IS}"></div>
-          <div style="margin-bottom:15px"><label style="${LS}">재구매 의사</label><div style="display:flex;gap:8px">${repBtns}</div></div>
+          <div style="margin-bottom:15px"><label style="${LS}">${t('drankDate')}</label><input type="date" value="${esc(f.drank_at)}" onchange="formSet('drank_at',this.value)" style="${IS}"></div>
+          <div style="margin-bottom:15px"><label style="${LS}">${t('overallRating')}</label><div id="star-display" style="display:flex;gap:4px">${renderStarInput(f.rating)}</div></div>
+          <div style="margin-bottom:15px"><label style="${LS}">${t('whatWine')}</label><div style="display:flex;gap:6px;flex-wrap:wrap" id="tag-container">${tagBtns}</div></div>
+          <div style="margin-bottom:15px"><label style="${LS}">${t('detailScores')}</label>${sliders}</div>
+          <div style="margin-bottom:15px"><label style="${LS}">${t('memo')}</label><textarea placeholder="${t('memoPlaceholder')}" rows="3" oninput="formSet('memo',this.value)" style="${IS};resize:vertical">${esc(f.memo)}</textarea></div>
+          <div style="margin-bottom:15px"><label style="${LS}">${t('foodPairing')}</label><input type="text" placeholder="${t('foodPlaceholder')}" value="${esc(f.food_pairing)}" oninput="formSet('food_pairing',this.value)" style="${IS}"></div>
+          <div style="margin-bottom:15px"><label style="${LS}">${t('repurchase')}</label><div style="display:flex;gap:8px">${repBtns}</div></div>
         </div>
         <!-- 저장 버튼 (탭 2 맨 아래) -->
         <div style="padding:20px 0 8px">
           <button onclick="submitForm()" id="submit-btn2" style="width:100%;padding:14px;background:linear-gradient(135deg,#9B2335,#C0392B);color:#fff;border-radius:12px;font-size:15px;font-weight:700;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 3px 12px rgba(192,57,43,.35);transition:opacity .15s" onmouseenter="this.style.opacity='.88'" onmouseleave="this.style.opacity='1'">
-            🍷 와인 저장하기
+            ${t('saveWine')}
           </button>
         </div>
-        ${prevBtn('이전', 1)}
+        ${prevBtn(t('prev'), 1)}
       </div>
 
     </div>
@@ -973,7 +1173,8 @@ function renderForm(isEdit){
 }
 
 function renderStarInput(val){
-  return [1,2,3,4,5].map(s=>`<span onclick="formSetStar(${s})" onmousemove="hoverStar(event,${s})" onmouseleave="resetStarHover()" style="font-size:30px;color:${s<=val?'#E07B2A':'#D9CFCA'};cursor:pointer;line-height:1;user-select:none">${s<=Math.floor(val)?'★':s-0.5<=val?'⭐':'☆'}</span>`).join('');
+  val=val||0;
+  return [1,2,3,4,5].map(s=>`<span onclick="formSetStar(${s})" style="font-size:34px;color:${s<=val?'#E07B2A':'#D9CFCA'};cursor:pointer;line-height:1;user-select:none;-webkit-tap-highlight-color:transparent;padding:2px">${s<=val?'★':'☆'}</span>`).join('');
 }
 
 
@@ -1009,7 +1210,7 @@ function refreshImagePreview(){
   const container=document.getElementById('img-preview-container');
   if(!container)return;
   if(formState.user_image_url){
-    const aiBlock='<button id="ai-recognize-btn" onclick="recognizeWineLabel()" class="ai-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 1010 10"/><path d="M12 6v6l4 2"/><path d="M20 2v4h-4"/></svg> ✨ AI로 와인 라벨 인식</button>';
+    const aiBlock='<button id="ai-recognize-btn" onclick="recognizeWineLabel()" class="ai-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 1010 10"/><path d="M12 6v6l4 2"/><path d="M20 2v4h-4"/></svg> '+t('aiRecognize')+'</button>';
     container.innerHTML=
       '<div style="position:relative;margin-bottom:10px">'
       +'<img src="'+formState.user_image_url+'" class="img-thumb" alt="와인 사진">'
@@ -1025,17 +1226,13 @@ function imagePlaceholderHTML(){
   return `<div style="display:flex;gap:8px;margin-bottom:8px">
     <button type="button" onclick="pickImage('camera')" style="flex:1;height:90px;border:2px dashed var(--bdr);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--surf);cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--bdr)'">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-      <span style="font-size:11px;color:var(--mut);font-weight:500">카메라</span>
+      <span style="font-size:11px;color:var(--mut);font-weight:500">${t('camera')}</span>
     </button>
     <button type="button" onclick="pickImage('gallery')" style="flex:1;height:90px;border:2px dashed var(--bdr);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--surf);cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--bdr)'">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-      <span style="font-size:11px;color:var(--mut);font-weight:500">갤러리</span>
+      <span style="font-size:11px;color:var(--mut);font-weight:500">${t('gallery')}</span>
     </button>
-  </div>
-  <button type="button" onclick="openScanner()" style="width:100%;padding:8px;border:1px solid var(--bdr);border-radius:8px;display:flex;align-items:center;justify-content:center;gap:6px;background:transparent;color:var(--mut);font-size:12px;font-weight:500;transition:all .15s" onmouseenter="this.style.borderColor='var(--mut)'" onmouseleave="this.style.borderColor='var(--bdr)'">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><path d="M21 16h-3v3M21 21h-3M18 16v5M13 3v2M13 7v2M11 3h2M13 11h2M11 11h2M11 8v3"/></svg>
-    바코드로 검색하기
-  </button>`;
+  </div>`;
 }
 
 function removeImage(){
@@ -1063,13 +1260,13 @@ function closeSettings(){
 // AI WINE LABEL RECOGNITION
 // ══════════════════════════════
 async function recognizeWineLabel(){
-  if(!formState.user_image_url){showToast('먼저 사진을 첨부해주세요');return;}
+  if(!formState.user_image_url){showToast(t('aiNeedPhoto'));return;}
 
   // UI: 로딩 상태
   const btn=document.getElementById('ai-recognize-btn');
   if(btn){
     btn.disabled=true;
-    btn.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> 라벨 분석 중...`;
+    btn.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> ${t('aiAnalyzing')}`;
   }
 
   // spin 애니메이션 추가
@@ -1091,18 +1288,20 @@ async function recognizeWineLabel(){
           role:'user',
           content:[
             {type:'image_url',image_url:{url:formState.user_image_url,detail:'low'}},
-            {type:'text',text:'이 와인 라벨을 분석해서 아래 JSON 형식으로만 응답하세요. 마크다운이나 추가 설명 없이 순수 JSON만.\n{\n  "name": "와인 전체 이름 (빈티지 포함 가능)",\n  "producer": "생산자 또는 와이너리명",\n  "vintage": 연도숫자또는null,\n  "country": "생산국 (한국어)",\n  "region": "세부 지역",\n  "grape": "주요 포도 품종",\n  "alcohol": 도수숫자또는null,\n  "wine_type": "red 또는 white 또는 sparkling 또는 rose 또는 dessert 또는 fortified"\n}\n정보가 라벨에 없으면 null로. wine_type은 반드시 저 6가지 중 하나로.'}
+            {type:'text',text:(LANG==='ko'
+              ? '이미지를 분석하세요. 와인/주류 라벨이 아니면(예: 사람, 동물, 음식, 풍경, 일반 물건) 반드시 {"not_wine": true} 만 응답하세요.\n와인이나 주류 라벨이면 아래 JSON 형식으로만 응답하세요. 마크다운이나 추가 설명 없이 순수 JSON만.\n{\n  "name": "와인 전체 이름 (빈티지 포함 가능)",\n  "producer": "생산자 또는 와이너리명",\n  "vintage": 연도숫자또는null,\n  "country": "생산국 (한국어)",\n  "region": "세부 지역 (한국어)",\n  "grape": "주요 포도 품종 (한국어)",\n  "alcohol": 도수숫자또는null,\n  "wine_type": "red 또는 white 또는 sparkling 또는 rose 또는 dessert 또는 fortified"\n}\n정보가 라벨에 없으면 null로. wine_type은 반드시 저 6가지 중 하나로.'
+              : 'Analyze the image. If it is NOT a wine/alcohol label (e.g. a person, animal, food, landscape, generic object), respond with ONLY {"not_wine": true}.\nIf it is a wine or alcohol label, respond ONLY in the following JSON format. No markdown, no extra text, pure JSON only.\n{\n  "name": "full wine name (vintage may be included)",\n  "producer": "producer or winery name",\n  "vintage": yearNumberOrNull,\n  "country": "country of origin (in English)",\n  "region": "sub-region (in English)",\n  "grape": "main grape variety (in English)",\n  "alcohol": abvNumberOrNull,\n  "wine_type": "red or white or sparkling or rose or dessert or fortified"\n}\nUse null if not on the label. wine_type must be one of those 6 values.')}
           ]
         }]
       })
     });
 
     if(res.status===401){
-      showToast('❌ AI 서비스 오류\n잠시 후 다시 시도해주세요');
+      showToast(t('aiServiceErr'));
       return;
     }
-    if(res.status===429){showToast('⚠️ API 요청 한도 초과\n잠시 후 다시 시도해주세요');return;}
-    if(!res.ok){showToast('❌ API 오류 ('+res.status+')\n다시 시도해주세요');return;}
+    if(res.status===429){showToast(t('aiRateLimit'));return;}
+    if(!res.ok){showToast(t('aiApiErr',res.status));return;}
 
     const data=await res.json();
     const raw=data.choices?.[0]?.message?.content||'';
@@ -1113,25 +1312,31 @@ async function recognizeWineLabel(){
       const clean=raw.replace(/```json|```/g,'').trim();
       wine=JSON.parse(clean);
     }catch(e){
-      showToast('⚠️ 라벨을 읽지 못했습니다\n선명한 사진으로 다시 시도해주세요');
+      showToast(t('aiReadFail'));
+      return;
+    }
+
+    // 와인이 아닌 사진인 경우
+    if(wine.not_wine===true){
+      showToast(t('aiNotWine'));
       return;
     }
 
     // 폼 필드 자동 채우기
     const filled=[];
     const validStr=v=>v&&v!=='null'&&v!=='undefined'&&String(v).trim()!=='';
-    if(validStr(wine.name)){formState.name=wine.name;filled.push('이름');}
-    if(validStr(wine.producer)){formState.producer=wine.producer;filled.push('생산자');}
-    if(wine.vintage&&wine.vintage!=='null'){formState.vintage=String(wine.vintage);filled.push('빈티지');}
-    if(validStr(wine.country)){formState.country=wine.country;filled.push('국가');}
-    if(validStr(wine.region)){formState.region=wine.region;filled.push('지역');}
-    if(validStr(wine.grape)){formState.grape=wine.grape;filled.push('품종');}
-    if(wine.alcohol&&wine.alcohol!=='null'){formState.alcohol=String(wine.alcohol);filled.push('도수');}
+    if(validStr(wine.name)){formState.name=wine.name;filled.push(t('wineName'));}
+    if(validStr(wine.producer)){formState.producer=wine.producer;filled.push(t('producer'));}
+    if(wine.vintage&&wine.vintage!=='null'){formState.vintage=String(wine.vintage);filled.push(t('vintage'));}
+    if(validStr(wine.country)){formState.country=wine.country;filled.push(t('country'));}
+    if(validStr(wine.region)){formState.region=wine.region;filled.push(t('region'));}
+    if(validStr(wine.grape)){formState.grape=wine.grape;filled.push(t('grape'));}
+    if(wine.alcohol&&wine.alcohol!=='null'){formState.alcohol=String(wine.alcohol);filled.push(t('alcohol'));}
     const validTypes=['red','white','sparkling','rose','dessert','fortified'];
-    if(wine.wine_type&&validTypes.includes(wine.wine_type)){formState.wine_type=wine.wine_type;filled.push('타입');}
+    if(wine.wine_type&&validTypes.includes(wine.wine_type)){formState.wine_type=wine.wine_type;filled.push(t('wineType'));}
 
     if(filled.length===0){
-      showToast('⚠️ 정보를 찾지 못했습니다\n직접 입력해주세요');
+      showToast(t('aiNoInfo'));
       return;
     }
 
@@ -1141,17 +1346,17 @@ async function recognizeWineLabel(){
     // 탭 0으로 이동 (와인 정보 탭)
     switchFormTab(0);
 
-    showToast('✅ AI 인식 완료!\n'+filled.join(' · ')+'\n나머지는 직접 수정해주세요');
+    showToast(t('aiDone',filled.join(' · ')));
 
   }catch(err){
     if(err.name==='TypeError'&&err.message.includes('fetch')){
-      showToast('📡 네트워크 오류\n인터넷 연결을 확인해주세요');
+      showToast(t('aiNetErr'));
     } else {
-      showToast('❌ 오류가 발생했습니다\n다시 시도해주세요');
+      showToast(t('aiErr'));
     }
   } finally {
     const b=document.getElementById('ai-recognize-btn');
-    if(b){b.disabled=false;b.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 1010 10"/><path d="M12 6v6l4 2"/><path d="M20 2v4h-4"/></svg> ✨ AI로 와인 라벨 인식';}
+    if(b){b.disabled=false;b.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 1010 10"/><path d="M12 6v6l4 2"/><path d="M20 2v4h-4"/></svg> '+t('aiRecognize');}
   }
 }
 
@@ -1412,7 +1617,9 @@ function buildSystemPrompt(){
   const tasted=wines.filter(w=>w.rating!=null).sort((a,b)=>(b.rating||0)-(a.rating||0)).slice(0,20);
   const stored=wines.filter(w=>w.status==='stored').slice(0,10);
 
-  let context='당신은 친근하고 전문적인 소믈리에 AI입니다. 한국어로 답변하세요. 답변은 200자 이내로 간결하게.\n\n';
+  let context=(LANG==='ko'
+    ? '당신은 친근하고 전문적인 소믈리에 AI입니다. 한국어로 답변하세요. 답변은 200자 이내로 간결하게.\n\n'
+    : 'You are a friendly, professional sommelier AI. Always reply in English. Keep answers concise, under about 80 words.\n\n');
 
   if(tasted.length>0){
     context+='[사용자 시음 기록]\n';
@@ -1436,13 +1643,88 @@ function buildSystemPrompt(){
   return context;
 }
 
+// ══════════════════════════════
+// AI 취향 리포트 (2단계 핵심 기능)
+// ══════════════════════════════
+let _lastReport = null; // 세션 내 캐시
+
+async function generateTasteReport(){
+  const tasted = wines.filter(w=>w.rating!=null);
+  if(tasted.length < 3){ showToast(t('aiReportNeedData')); return; }
+
+  const btn = document.getElementById('ai-report-btn');
+  const box = document.getElementById('ai-report-content');
+
+  // 이미 만든 리포트가 있으면 재사용 (비용 절약)
+  if(_lastReport){
+    if(box) box.innerHTML = `<div style="background:var(--surf);border-radius:10px;padding:14px;margin-bottom:12px;font-size:13px;line-height:1.7;color:var(--dark);white-space:pre-line">${esc(_lastReport)}</div>`;
+    if(btn) btn.style.display='none';
+    return;
+  }
+
+  if(btn){ btn.disabled=true; btn.textContent=t('aiReportGenerating'); btn.style.opacity='.7'; }
+
+  // 취향 데이터 집계
+  const top = tasted.slice().sort((a,b)=>(b.rating||0)-(a.rating||0)).slice(0,15);
+  const countries={}, grapes={}, types={};
+  tasted.forEach(w=>{
+    if(w.country)countries[w.country]=(countries[w.country]||0)+(w.rating||0);
+    if(w.grape)grapes[w.grape]=(grapes[w.grape]||0)+(w.rating||0);
+    if(w.wine_type)types[w.wine_type]=(types[w.wine_type]||0)+(w.rating||0);
+  });
+  const topN=o=>Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]).join(', ');
+  const avgScores=TK.map((k,i)=>{const v=tasted.filter(w=>w[k]>0);return `${TL[i]}:${v.length?(v.reduce((s,w)=>s+(w[k]||0),0)/v.length).toFixed(1):'-'}`;}).join(', ');
+  const avgR=(tasted.reduce((s,w)=>s+(w.rating||0),0)/tasted.length).toFixed(1);
+
+  const dataBlock =
+    `Tasted ${tasted.length} wines, avg rating ${avgR}/5.\n`+
+    `Top countries: ${topN(countries)||'-'}\n`+
+    `Top grapes: ${topN(grapes)||'-'}\n`+
+    `Top types: ${Object.entries(types).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>{const wt=WINE_TYPES.find(t=>t.v===x[0]);return wt?wt.l:x[0];}).join(', ')||'-'}\n`+
+    `Avg taste scores (0-5): ${avgScores}\n`+
+    `Highest rated: ${top.slice(0,8).map(w=>`${w.name||'?'}(${w.country||''} ${w.wine_type||''} ★${w.rating})`).join(', ')}`;
+
+  const sysPrompt = LANG==='ko'
+    ? '당신은 전문 소믈리에입니다. 사용자의 와인 시음 데이터를 보고 취향을 분석하는 리포트를 한국어로 작성하세요. 형식:\n1) 한 줄 취향 요약\n2) 선호 스타일 분석 (2-3문장)\n3) 추천 와인 3가지 (이름 + 한 줄 이유)\n친근하고 구체적으로. 전체 300자 이내. 마크다운 기호(#, * 등) 쓰지 말고 자연스러운 문장으로.'
+    : 'You are a professional sommelier. Analyze the user\'s wine tasting data and write a taste report in English. Format:\n1) One-line taste summary\n2) Preferred style analysis (2-3 sentences)\n3) 3 wine recommendations (name + one-line reason)\nBe friendly and specific. Under 120 words total. No markdown symbols (#, *), just natural sentences.';
+
+  try{
+    const res = await fetch('/api/sommelier',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'gpt-4o-mini', max_tokens:500, temperature:0.7,
+        messages:[
+          {role:'system', content:sysPrompt},
+          {role:'user', content:dataBlock}
+        ]
+      }),
+      signal:AbortSignal.timeout(20000)
+    });
+    if(!res.ok){ showToast(t('aiReportErr')); return; }
+    const data = await res.json();
+    const report = data.choices?.[0]?.message?.content?.trim() || '';
+    if(!report){ showToast(t('aiReportErr')); return; }
+
+    _lastReport = report;
+    if(box) box.innerHTML = `<div style="background:var(--surf);border-radius:10px;padding:14px;margin-bottom:12px;font-size:13px;line-height:1.7;color:var(--dark);white-space:pre-line">${esc(report)}</div>`;
+    if(btn) btn.style.display='none';
+
+  }catch(err){
+    if(err.name==='TimeoutError'||err.name==='AbortError') showToast(t('chatTimeout'));
+    else showToast(t('aiReportErr'));
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent=t('aiReportBtn'); btn.style.opacity='1'; }
+  }
+}
+
 function openChat(){
   const overlay=document.getElementById('chat-overlay');
   overlay.style.display='flex';
   overlay.style.flexDirection='column';
   if(chatHistory.length===0){
     // 첫 인사
-    appendChatBubble('ai','안녕하세요! 와인 소믈리에 AI입니다 🍷\n어떤 와인이 궁금하신가요? 추천, 페어링, 취향 분석 등 무엇이든 물어보세요!');
+    appendChatBubble('ai',t('chatGreeting'));
   }
 }
 
@@ -1453,7 +1735,7 @@ function closeChat(){
 function clearChat(){
   chatHistory=[];
   document.getElementById('chat-messages').innerHTML='';
-  appendChatBubble('ai','대화가 초기화됐습니다 🍷\n새로운 질문을 입력해주세요!');
+  appendChatBubble('ai',t('chatResetDone'));
 }
 
 function appendChatBubble(role,text){
@@ -1519,12 +1801,12 @@ async function sendChat(){
       signal:AbortSignal.timeout(15000)
     });
 
-    if(res.status===401){removeTyping();showToast('❌ AI 서비스 오류\n잠시 후 다시 시도해주세요');return;}
-    if(res.status===429){removeTyping();showToast('⚠️ 요청 한도 초과. 잠시 후 다시 시도해주세요');return;}
-    if(!res.ok){removeTyping();showToast('❌ 오류 ('+res.status+')');return;}
+    if(res.status===401){removeTyping();showToast(t('aiServiceErr'));return;}
+    if(res.status===429){removeTyping();showToast(t('aiRateLimit'));return;}
+    if(!res.ok){removeTyping();showToast(t('aiApiErr',res.status));return;}
 
     const data=await res.json();
-    const reply=data.choices?.[0]?.message?.content||'답변을 생성하지 못했습니다.';
+    const reply=data.choices?.[0]?.message?.content||(LANG==='ko'?'답변을 생성하지 못했습니다.':'Could not generate a response.');
 
     // AI 답변 저장
     chatHistory.push({role:'assistant',content:reply});
@@ -1534,9 +1816,9 @@ async function sendChat(){
   }catch(err){
     removeTyping();
     if(err.name==='TimeoutError'||err.name==='AbortError'){
-      showToast('⏱ 응답 시간 초과. 다시 시도해주세요');
+      showToast(t('chatTimeout'));
     } else {
-      showToast('❌ 오류: '+(err.message||'알 수 없는 오류'));
+      showToast(t('chatErr',err.message||'Unknown error'));
     }
   }finally{
     if(sendBtn)sendBtn.style.opacity='1';
@@ -1572,19 +1854,40 @@ function renderMainContent(){
   else if(curScreen==='new'||curScreen==='edit')mc.innerHTML=renderForm(curScreen==='edit');
   updateCount();
 }
-function updateCount(){const el=document.getElementById('hdr-count');if(el)el.textContent=wines.length+'병';}
+function updateCount(){const el=document.getElementById('hdr-count');if(el)el.textContent=t('bottles',wines.length);}
 function openDetail(id){selectedId=id;curScreen='detail';renderMainContent();}
 function closeDetail(){curScreen=curTab;renderMainContent();}
 function openNew(){initForm(null);curScreen='new';renderMainContent();}
 function openEdit(id){const w=wines.find(x=>x.id===id);initForm(w);curScreen='edit';renderMainContent();}
 function closeForm(){curScreen=selectedId&&curScreen==='edit'?'detail':curTab;renderMainContent();}
+// ── 커스텀 확인 모달 ──
+function showConfirm(opts){
+  return new Promise(resolve=>{
+    const modal=document.getElementById('confirm-modal');
+    document.getElementById('confirm-icon').textContent=opts.icon||'🗑️';
+    document.getElementById('confirm-title').textContent=opts.title||'삭제할까요?';
+    document.getElementById('confirm-msg').textContent=opts.msg||'';
+    const okBtn=document.getElementById('confirm-ok');
+    const cancelBtn=document.getElementById('confirm-cancel');
+    okBtn.textContent=opts.okText||'확인';
+    okBtn.style.background=opts.danger===false?'var(--red)':'var(--danger)';
+    modal.style.display='flex';
+    const cleanup=()=>{modal.style.display='none';okBtn.onclick=null;cancelBtn.onclick=null;};
+    okBtn.onclick=()=>{cleanup();resolve(true);};
+    cancelBtn.onclick=()=>{cleanup();resolve(false);};
+  });
+}
+
 async function deleteWine(id){
-  if(!confirm('이 와인을 삭제할까요?'))return;
+  const ok=await showConfirm({icon:'🗑️',title:t('confirmDelTitle'),msg:t('confirmDelMsg'),okText:t('confirmDelOk')});
+  if(!ok)return;
   try{
     await dbDeleteWine(id);
     wines=wines.filter(w=>w.id!==id);
     selectedId=null;curScreen=curTab;renderMainContent();
-  }catch(err){showToast('❌ 삭제 실패: '+err.message);}
+    _lastReport = null;
+    showToast(t('deleted'));
+  }catch(err){showToast('❌ '+err.message);}
 }
 function setFilter(v){filterStatus=v;renderMainContent();}
 function setSort(v){filterSort=v;renderMainContent();}
@@ -1606,9 +1909,9 @@ function rerenderFormRegion(){
   const LS='display:block;font-size:11px;color:var(--mut);margin-bottom:7px;font-weight:600;text-transform:uppercase;letter-spacing:.05em';
   const rc=document.getElementById('region-container');if(!rc)return;
   const opts=(REGIONS[f.country]||[]).map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
-  rc.innerHTML=`<label style="${LS}">지역</label>`+(REGIONS[f.country]?`<select onchange="formSet('region',this.value)" style="${IS}"><option value="">선택</option>${opts}</select>`:`<input type="text" placeholder="직접 입력" oninput="formSet('region',this.value)" style="${IS}">`);
+  rc.innerHTML=`<label style="${LS}">${t('region')}</label>`+(REGIONS[f.country]?`<select onchange="formSet('region',this.value)" style="${IS}"><option value="">${t('select')}</option>${opts}</select>`:`<input type="text" placeholder="${t('directInput')}" oninput="formSet('region',this.value)" style="${IS}">`);
 }
-function onPriceInput(el){const n=el.value.replace(/[^0-9]/g,'');const fmt=n?parseInt(n).toLocaleString('ko-KR'):'';el.value=fmt;formState.purchase_price=fmt;}
+function onPriceInput(el){const n=el.value.replace(/[^0-9]/g,'');const fmt=n?parseInt(n).toLocaleString(CURRENCY.locale):'';el.value=fmt;formState.purchase_price=fmt;}
 function changeQty(d){formState.quantity=String(Math.max(0,parseInt(formState.quantity||0)+d));const el=document.getElementById('qty-display');if(el)el.textContent=formState.quantity;}
 function toggleTasting(){
   formState.has_tasting=!formState.has_tasting;
@@ -1619,8 +1922,6 @@ function toggleTasting(){
 }
 function formToggleTag(t){const idx=formState.tags.indexOf(t);if(idx>=0)formState.tags.splice(idx,1);else formState.tags.push(t);const btn=[...document.querySelectorAll('#tag-container .tag-btn')].find(b=>b.textContent===t);if(btn)btn.classList.toggle('on',formState.tags.includes(t));}
 function formSetStar(s){formState.rating=s;const d=document.getElementById('star-display');if(d)d.innerHTML=renderStarInput(s);}
-function hoverStar(e,s){const rect=e.target.getBoundingClientRect();const half=(e.clientX-rect.left)<rect.width/2;const v=half?s-0.5:s;const d=document.getElementById('star-display');if(d)d.innerHTML=renderStarInput(v);}
-function resetStarHover(){const d=document.getElementById('star-display');if(d)d.innerHTML=renderStarInput(formState.rating||0);}
 
 
 
@@ -1662,7 +1963,7 @@ function formSetRepurchase(v){
 
 async function submitForm(){
   // 로그인 체크
-  if(!currentUser){showToast('❌ 로그인이 필요합니다');return;}
+  if(!currentUser){showToast(t('loginRequired'));return;}
 
   const f=formState;
   const st=s=>String(s==null?'':s).trim();
@@ -1671,13 +1972,13 @@ async function submitForm(){
   if(!st(f.name)){
     switchFormTab(0);
     setTimeout(()=>{const ne=document.getElementById('err-name');if(ne)ne.style.display='block';},50);
-    showToast('⚠️ 와인 이름을 입력해주세요');
+    showToast('⚠️ '+t('errName'));
     return;
   }
   if(f.vintage&&(+f.vintage<1900||+f.vintage>2030)){
     switchFormTab(0);
     setTimeout(()=>{const ve=document.getElementById('err-vintage');if(ve)ve.style.display='block';},50);
-    showToast('⚠️ 빈티지는 1900~2030 사이로 입력해주세요');
+    showToast('⚠️ '+t('errVintage'));
     return;
   }
 
@@ -1687,7 +1988,7 @@ async function submitForm(){
   if(btn){btn.disabled=true;btn.textContent='저장 중...';}
   const safetyTimer=setTimeout(()=>{
     resetBtn();
-    showToast('⏱ 저장 시간이 초과됐습니다\n네트워크를 확인해주세요');
+    showToast(t('saveTimeout'));
   },20000);
 
   try{
@@ -1736,7 +2037,8 @@ async function submitForm(){
     // ✅ 텍스트 저장 완료 → 즉시 화면 전환
     clearTimeout(safetyTimer);
     resetBtn();
-    showToast(hasNewImage ? '✅ 저장됐습니다!\n사진 업로드 중...' : '✅ 저장됐습니다!');
+    _lastReport = null; // 데이터 변경 → AI 리포트 캐시 초기화
+    showToast(hasNewImage ? t('savedImg') : t('saved'));
     renderMainContent();
 
     // 🖼 이미지는 백그라운드에서 업로드 (느려도 UI 안 막힘)
@@ -1748,13 +2050,13 @@ async function submitForm(){
           .eq('id', savedId).eq('user_id', currentUser.id);
         // 메모리 업데이트
         wines = wines.map(w=>w.id===savedId?{...w, user_image_url:url}:w);
-        showToast('🖼 사진 업로드 완료!');
+        showToast(t('imgDone'));
       }).catch(()=>{}); // 이미지 실패해도 무시
     }
 
   }catch(err){
     console.error('submitForm error:', err);
-    showToast('❌ 저장 실패: '+(err?.message||'알 수 없는 오류'));
+    showToast('❌ '+(err?.message||'Error'));
     clearTimeout(safetyTimer);
     resetBtn();
   }
@@ -1780,7 +2082,8 @@ function hideInitLoading(){
 }
 
 async function signOut(){
-  if(!confirm('로그아웃 할까요?'))return;
+  const ok=await showConfirm({icon:'👋',title:t('confirmLogoutTitle'),msg:'',okText:t('confirmLogoutOk')});
+  if(!ok)return;
   closeSettings();
   await sb.auth.signOut();
 }
@@ -1816,7 +2119,43 @@ document.getElementById('btn-login').addEventListener('click',async()=>{
 });
 
 // 앱 초기화
+// 정적 HTML 텍스트에 번역 적용
+function applyStaticI18n(){
+  const set=(id,txt)=>{const el=document.getElementById(id);if(el)el.textContent=txt;};
+  set('t-connecting', t('connecting'));
+  const tag=document.getElementById('t-login-tagline');
+  if(tag)tag.innerHTML=t('loginTagline1')+'<br>'+t('loginTagline2');
+  set('t-login-google', t('loginGoogle'));
+  set('t-login-terms', t('loginTerms'));
+  // 네비게이션
+  document.querySelectorAll('.t-nav').forEach(el=>{
+    const k=el.dataset.nav;
+    el.textContent = k==='home'?t('navHome'):k==='cellar'?t('navCellar'):t('navTaste');
+  });
+  // 앱 이름 (HTML lang 속성도)
+  document.documentElement.lang = LANG;
+  // 설정 화면
+  set('t-settings-title', t('settings'));
+  set('t-account', t('account'));
+  set('t-logout', t('logout'));
+  const pl=document.getElementById('t-privacy-link'); if(pl)pl.textContent=t('privacyPolicy');
+  set('t-ai-feature-title', t('aiFeatureTitle'));
+  const afd=document.getElementById('t-ai-feature-desc');
+  if(afd)afd.innerHTML=t('aiFeatureDesc').replace(/\n/g,'<br>');
+  // 채팅 화면
+  set('t-chat-title', t('chatTitle'));
+  set('t-chat-sub', t('chatSub'));
+  set('t-chat-reset', t('chatReset'));
+  const ci=document.getElementById('chat-input-field');
+  if(ci)ci.placeholder=t('chatPlaceholder');
+  // 프리셋 버튼
+  document.querySelectorAll('.t-preset').forEach(el=>{
+    el.textContent = t('preset'+el.dataset.p);
+  });
+}
+
 (async function initApp(){
+  applyStaticI18n();
   try{
     // 기존 세션 확인 (OAuth redirect 후 복원)
     const{data:{session}}=await sb.auth.getSession();
