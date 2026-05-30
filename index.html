@@ -895,19 +895,7 @@ function renderForm(isEdit){
       <button id="submit-btn" class="btn-red" onclick="submitForm()">저장</button>
     </div>
 
-    <!-- 스텝 인디케이터 -->
-    <div style="padding:10px 16px 0;background:var(--bg2);flex-shrink:0">
-      <div style="display:flex;align-items:center;gap:0">
-        ${[['🍷','와인 정보',0],['🏠','보관 정보',1],['📝','시음 기록',2]].map(([icon,label,n])=>`
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer" onclick="switchFormTab(${n})">
-            <div id="step-circle-${n}" style="width:32px;height:32px;border-radius:16px;background:${n===0?'var(--red)':'var(--surf)'};border:2px solid ${n===0?'var(--red)':'var(--bdr)'};display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s">${icon}</div>
-            <span id="step-label-${n}" style="font-size:10px;font-weight:600;color:${n===0?'var(--red)':'var(--light)'};transition:color .2s">${label}</span>
-          </div>
-          ${n<2?`<div id="step-line-${n}" style="flex:none;width:24px;height:2px;background:var(--bdr);margin-bottom:18px;border-radius:2px;transition:background .2s"></div>`:''}`
-        ).join('')}
-      </div>
-    </div>
-    <div class="tabs" id="form-tabs" style="border-top:1px solid var(--bdr)">
+    <div class="tabs" id="form-tabs">
       <button class="tab-btn active" onclick="switchFormTab(0)">와인 정보</button>
       <button class="tab-btn" onclick="switchFormTab(1)">보관 정보</button>
       <button class="tab-btn" onclick="switchFormTab(2)">시음 기록</button>
@@ -936,7 +924,7 @@ function renderForm(isEdit){
           <div><label style="${LS}">빈티지</label><input type="number" value="${esc(f.vintage)}" oninput="formSet('vintage',this.value)" style="${IS}"><p id="err-vintage" class="xxs" style="color:var(--danger);margin-top:3px;display:none">1900~2030 사이</p></div>
           <div><label style="${LS}">도수 (%)</label><input type="number" step=".1" value="${esc(f.alcohol)}" oninput="formSet('alcohol',this.value)" style="${IS}"><p id="err-alcohol" class="xxs" style="color:var(--danger);margin-top:3px;display:none">0~100 사이</p></div>
         </div>
-        ${nextBtn('다음 · 보관 정보', 1)}
+        ${nextBtn('다음', 1)}
       </div>
 
       <!-- ── 탭 1: 보관 정보 ── -->
@@ -952,8 +940,8 @@ function renderForm(isEdit){
             <button type="button" onclick="changeQty(1)" style="width:38px;height:38px;border-radius:10px;background:#fff;border:1.5px solid var(--bdr);color:var(--dark);font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer">+</button>
           </div>
         </div>
-        ${nextBtn('다음 · 시음 기록', 2)}
-        ${prevBtn('이전 · 와인 정보', 0)}
+        ${nextBtn('다음', 2)}
+        ${prevBtn('이전', 0)}
       </div>
 
       <!-- ── 탭 2: 시음 기록 ── -->
@@ -977,7 +965,7 @@ function renderForm(isEdit){
             🍷 와인 저장하기
           </button>
         </div>
-        ${prevBtn('이전 · 보관 정보', 1)}
+        ${prevBtn('이전', 1)}
       </div>
 
     </div>
@@ -1609,14 +1597,6 @@ function switchDetailTab(n){document.querySelectorAll('#detail-tabs .tab-btn').f
 function switchFormTab(n){
   document.querySelectorAll('#form-tabs .tab-btn').forEach((b,i)=>b.classList.toggle('active',i===n));
   ['ftab0','ftab1','ftab2'].forEach((id,i)=>document.getElementById(id).classList.toggle('hidden',i!==n));
-  [0,1,2].forEach(i=>{
-    const circle=document.getElementById('step-circle-'+i);
-    const label=document.getElementById('step-label-'+i);
-    const done=i<n, active=i===n;
-    if(circle){circle.style.background=active?'var(--red)':done?'var(--red-lt)':'var(--surf)';circle.style.borderColor=active||done?'var(--red)':'var(--bdr)';}
-    if(label){label.style.color=active?'var(--red)':done?'var(--red-mid)':'var(--light)';}
-  });
-  [0,1].forEach(i=>{const line=document.getElementById('step-line-'+i);if(line)line.style.background=i<n?'var(--red)':'var(--bdr)';});
   const body=document.getElementById('form-body');if(body)body.scrollTop=0;
 }
 function formSet(k,v){formState[k]=v;}
@@ -1690,179 +1670,4 @@ async function submitForm(){
   // 유효성 검사
   if(!st(f.name)){
     switchFormTab(0);
-    setTimeout(()=>{const ne=document.getElementById('err-name');if(ne)ne.style.display='block';},50);
-    showToast('⚠️ 와인 이름을 입력해주세요');
-    return;
-  }
-  if(f.vintage&&(+f.vintage<1900||+f.vintage>2030)){
-    switchFormTab(0);
-    setTimeout(()=>{const ve=document.getElementById('err-vintage');if(ve)ve.style.display='block';},50);
-    showToast('⚠️ 빈티지는 1900~2030 사이로 입력해주세요');
-    return;
-  }
-
-  // 버튼 로딩 상태 + 20초 안전 타임아웃
-  const btn=document.getElementById('submit-btn');
-  const resetBtn=()=>{if(btn){btn.disabled=false;btn.textContent='저장';}};
-  if(btn){btn.disabled=true;btn.textContent='저장 중...';}
-  const safetyTimer=setTimeout(()=>{
-    resetBtn();
-    showToast('⏱ 저장 시간이 초과됐습니다\n네트워크를 확인해주세요');
-  },20000);
-
-  try{
-    // wine 객체 생성 (try 안으로 이동 — 에러 발생 시 catch로 처리)
-    const wine={
-      id:f.id||null,  // 신규: null → DB가 UUID 생성. 수정: f.id 사용
-      name:st(f.name), producer:st(f.producer)||null,
-      country:f.country||null, region:st(f.region)||null,
-      grape:f.grape||null, wine_type:f.wine_type||'red',
-      vintage:f.vintage?+f.vintage:null, alcohol:f.alcohol?+f.alcohol:null,
-      user_image_url:f.user_image_url||null, status:f.status||'stored',
-      purchase_price:parsePrice(f.purchase_price),
-      purchase_place:st(f.purchase_place)||null,
-      purchase_date:f.purchase_date||null,
-      quantity:+f.quantity||1,
-      rating:f.has_tasting&&f.rating>0?f.rating:null,
-      aroma:f.has_tasting&&f.aroma>0?f.aroma:null,
-      body:f.has_tasting&&f.body>0?f.body:null,
-      acidity:f.has_tasting&&f.acidity>0?f.acidity:null,
-      tannin:f.has_tasting&&f.tannin>0?f.tannin:null,
-      sweetness:f.has_tasting&&f.sweetness>0?f.sweetness:null,
-      finish:f.has_tasting&&f.finish>0?f.finish:null,
-      memo:f.has_tasting&&st(f.memo)?st(f.memo):null,
-      food_pairing:f.has_tasting&&st(f.food_pairing)?st(f.food_pairing):null,
-      tags:[...f.tags], repurchase:f.repurchase,
-      drank_at:f.has_tasting&&f.drank_at?f.drank_at:null,
-    };
-
-    // 이미지 base64 → Supabase Storage 업로드
-    if(wine.user_image_url&&wine.user_image_url.startsWith('data:')){
-      const url=await uploadImageToStorage(wine.user_image_url);
-      wine.user_image_url=url;
-    }
-
-    if(curScreen==='edit'&&wine.id){
-      await dbUpdateWine(wine.id,wine);
-      wines=wines.map(w=>w.id===wine.id?{...wine}:w);
-      selectedId=wine.id;curScreen='detail';
-    } else {
-      const saved=await dbInsertWine(wine);
-      wines=[saved,...wines];
-      curScreen=curTab;
-    }
-    showToast('✅ 저장됐습니다!');
-    renderMainContent();
-  }catch(err){
-    console.error('submitForm error:', err);
-    showToast('❌ 저장 실패: '+(err?.message||'알 수 없는 오류'));
-  }finally{
-    clearTimeout(safetyTimer);
-    resetBtn();
-  }
-}
-
-// ══════════════════════════════
-// BOOT — Supabase Auth
-// ══════════════════════════════
-function showLogin(){
-  document.getElementById('scr-login').classList.remove('hidden');
-  document.getElementById('scr-main').classList.add('hidden');
-}
-function showMain(){
-  document.getElementById('scr-login').classList.add('hidden');
-  document.getElementById('scr-main').classList.remove('hidden');
-  updateHeaderUser();
-  curScreen='home';
-  renderMainContent();
-}
-function hideInitLoading(){
-  const el=document.getElementById('init-loading');
-  if(el)el.style.display='none';
-}
-
-async function signOut(){
-  if(!confirm('로그아웃 할까요?'))return;
-  closeSettings();
-  await sb.auth.signOut();
-}
-
-function updateSettingsUser(){
-  if(!currentUser)return;
-  const name=currentUser.user_metadata?.full_name||'';
-  const email=currentUser.email||'';
-  const initial=(name||email)[0]?.toUpperCase()||'?';
-  const n=document.getElementById('settings-user-name');
-  const e=document.getElementById('settings-user-email');
-  const a=document.getElementById('settings-avatar');
-  if(n)n.textContent=name||email;
-  if(e)e.textContent=email;
-  if(a)a.textContent=initial;
-}
-
-// Google 로그인 버튼
-document.getElementById('btn-login').addEventListener('click',async()=>{
-  const btn=document.getElementById('btn-login');
-  btn.disabled=true;
-  btn.innerHTML='<div class="spinner" style="width:20px;height:20px;border-width:2px"></div> 연결 중...';
-  try{
-    await sb.auth.signInWithOAuth({
-      provider:'google',
-      options:{redirectTo:window.location.origin}
-    });
-  }catch(err){
-    btn.disabled=false;
-    btn.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Google로 계속하기';
-    showToast('❌ 로그인 오류: '+err.message);
-  }
-});
-
-// 앱 초기화
-(async function initApp(){
-  try{
-    // 기존 세션 확인 (OAuth redirect 후 복원)
-    const{data:{session}}=await sb.auth.getSession();
-    if(session?.user){
-      currentUser=session.user;
-      await loadWines();
-      hideInitLoading();
-      showMain();
-    } else {
-      hideInitLoading();
-      showLogin();
-    }
-  }catch(e){
-    hideInitLoading();
-    showLogin();
-  }
-
-  // 인증 상태 변화 감지
-  sb.auth.onAuthStateChange(async(event,session)=>{
-    if(event==='SIGNED_IN'&&session?.user){
-      currentUser=session.user;
-      await loadWines();
-      hideInitLoading();
-      showMain();
-    } else if(event==='SIGNED_OUT'){
-      currentUser=null;
-      wines=[];
-      showLogin();
-    }
-  });
-})();
-
-// iOS 홈화면 아이콘 생성
-(function(){try{
-  const svg=`<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><rect width="512" height="512" rx="115" fill="#8B0000"/><path d="M166 100 Q154 190 158 232 Q164 292 256 314 Q348 292 354 232 Q358 190 346 100 Z" fill="white" opacity=".92"/><path d="M172 248 Q178 294 256 314 Q334 294 340 248 Z" fill="#C0392B" opacity=".45"/><ellipse cx="208" cy="172" rx="26" ry="50" fill="white" opacity=".2"/><rect x="242" y="314" width="28" height="96" rx="14" fill="white" opacity=".78"/><path d="M186 408 Q256 398 326 408" stroke="white" stroke-width="28" stroke-linecap="round" fill="none" opacity=".78"/></svg>`;
-  const img=new Image();
-  img.onload=function(){
-    const cv=document.createElement('canvas');cv.width=180;cv.height=180;
-    cv.getContext('2d').drawImage(img,0,0,180,180);
-    const lk=document.createElement('link');lk.rel='apple-touch-icon';
-    lk.href=cv.toDataURL('image/png');document.head.appendChild(lk);
-  };
-  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
-}catch(e){}})();
-</script>
-</body>
-</html>
+    setTimeout(()=>{co
